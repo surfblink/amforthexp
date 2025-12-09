@@ -1,3 +1,5 @@
+This is a fork of https://sourceforge.net/p/amforth/code/2462/
+
 Author:
     Matthias Trute <mtrute@users.sourceforge.net>
     died 2020-03-25
