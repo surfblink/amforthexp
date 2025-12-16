@@ -4,8 +4,8 @@ ifeq ("$(REVISION)", "")
     REVISION := $(shell svnversion -n)
 endif
 
-CROSS=arm-linux-gnueabi-
-QEMU=qemu-arm-static
+CROSS=arm-linux-gnueabihf-
+QEMU=qemu-system-arm
 BOARD=$(shell uname -m)
 ifeq ("$(BOARD)", "armv7l")
    CROSS=
@@ -30,6 +30,7 @@ buildinfo: words/build-info.tmpl
 
 # setup some terminal settings. Otherwise all input will be echo'ed
 run: amforth
+	qemu-img resize ./amforth 128k
 	stty -icanon -echo
-	$(QEMU) ./amforth || true
+	$(QEMU) -machine raspi0 -display none -serial mon:stdio ./amforth || true
 	stty sane

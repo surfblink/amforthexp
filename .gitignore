@@ -1,0 +1,9 @@
+*.elf
+*.bin
+*.o
+*.log
+*.lst
+*.hex
+*.list
+**/words/build-info.s
+appl/linux-arm/amforth

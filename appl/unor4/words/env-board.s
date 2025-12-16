@@ -1,0 +1,5 @@
+
+ENVIRONMENT "board", BOARD
+
+  STRING "UNO R4 WIFI"
+.word XT_EXIT

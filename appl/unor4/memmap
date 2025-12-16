@@ -1,0 +1,28 @@
+
+OUTPUT_FORMAT("elf32-littlearm")
+OUTPUT_ARCH(arm)
+
+
+MEMORY
+{
+   flash(RX)   : ORIGIN = 0x00000000, LENGTH = 0x40000
+   sram(RW) : ORIGIN = 0x20000000, LENGTH = 0x8000
+   eeprom(RW) : ORIGIN = 0x40100000, LENGTH = 0x2000
+}
+
+SECTIONS
+{
+
+  amforth : {
+    *(amforth);  /* Daten */
+    *(.text);    /* Text  */
+    *(.data);    /* Daten (dito) */
+  } > flash
+
+
+  userdictionary (NOLOAD) : {
+    CACHE_START = . ;
+    *(.bss);    /* Nullen */
+    CACHE_END = . ;
+  } > sram
+}

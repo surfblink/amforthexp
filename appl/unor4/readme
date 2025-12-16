@@ -1,0 +1,100 @@
+# Arduino UNO R4 Wifi
+https://docs.arduino.cc/hardware/uno-r4-wifi/
+https://docs.freenove.com/projects/fnk0096/en/latest/
+
+# MCU
+Renesas R7FA4M1AB3CFM#AA0 (64pins, 5V) with FPU, 32-bit ARM Cortex M4F
+256 kB FLASH: $00000000 .. $00040000
+32 kB SRAM: $20000000 .. $20008000
+8 Kb EEPROM: $40100000 .. $40102000
+48 MHz
+
+## Registers
+
+### Periperheral I/O 
+$40000000 .. $40100000
+
+### Flash I/O
+$407E0000 .. $407F0000
+
+# WIFI
+ESP32-S3-MINI-1-N8 (3.3V), Xtensa® dual-core 32-bit LX7
+384 kB ROM
+512 kB SRAM
+40 MHz
+
+# Peripherals
+Capacitive Touch Sensing Unit (CTSU)
+USB 2.0 Full-Speed Module (USBFS)
+14-bit ADC
+Up to 12-bit DAC
+Operational Amplifier (OPAMP)
+
+# Communication
+1x UART (pin D0, D1)
+1x SPI (pin D10-D13, ICSP header)
+2x I2C (pin A4, A5, SDA, SCL), (Qwiic connector)
+1x CAN (pin D4, D5, external transceiver is required)
+
+# LED Matrix
+
+12 x 8 charlieplexed
+
+
+# OpenOCD Arduino logs
+
+Tools > Programmer > ARM CMSIS-DAP compatible.
+
+Waiting for gdb server to start...[2025-12-12T19:28:01.950Z] SERVER CONSOLE DEBUG: onBackendConnect: gdb-server session connected. You can switch to "DEBUG CONSOLE" to see GDB interactions.
+/Users/martin/Library/Arduino15/packages/arduino/tools/openocd/0.11.0-arduino2/bin/openocd \
+-c "gdb_port 50000" -c "tcl_port 50001" -c "telnet_port 50002" \
+-s /Users/martin/forth/unor4/tutorial/Sketches/Sketch_1.2.1_Control_LED_by_Control_Board \
+-f "/Applications/Arduino IDE.app/Contents/Resources/app/plugins/cortex-debug/extension/support/openocd-helpers.tcl" \
+-f interface/cmsis-dap.cfg \
+-f /Users/martin/Library/Arduino15/packages/arduino/hardware/renesas_uno/1.5.1/debugger/select_swd.cfg \
+-f /Users/martin/Library/Arduino15/packages/arduino/hardware/renesas_uno/1.5.1/debugger/R7FA4M1AB.cfg
+
+Open On-Chip Debugger 0.11.0+dev-gab95bac57-dirty (2021-05-11-10:57)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+CDRTOSConfigure
+swd
+adapter speed: 1000 kHz
+
+Info : Listening on port 50001 for tcl connections
+Info : Listening on port 50002 for telnet connections
+Info : CMSIS-DAP: SWD  Supported
+Info : CMSIS-DAP: FW Version = 2.0.0
+Info : CMSIS-DAP: Serial# = 123456789101112
+Info : CMSIS-DAP: Interface Initialised (SWD)
+Info : SWCLK/TCK = 0 SWDIO/TMS = 0 TDI = 0 TDO = 0 nTRST = 0 nRESET = 0
+Info : CMSIS-DAP: Interface ready
+Info : clock speed 1000 kHz
+Info : SWD DPIDR 0x5ba02477
+Info : ra4m1.cpu: hardware has 6 breakpoints, 4 watchpoints
+Info : starting gdb server for ra4m1.cpu on 50000
+Info : Listening on port 50000 for gdb connections
+Info : accepting 'gdb' connection on tcp/50000
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x21000000 pc: 0x00009d2e msp: 0x20007ec0
+target halted due to debug-request, current mode: Thread 
+xPSR: 0x01000000 pc: 0x00001f34 msp: 0x20003990
+force hard breakpoints
+
+
+
+
+-f "/Applications/Arduino IDE.app/Contents/Resources/app/plugins/cortex-debug/extension/support/openocd-helpers.tcl" \
+set USE_SWO 0
+proc CDSWOConfigure { CDCPUFreqHz CDSWOFreqHz CDSWOOutput } ...
+proc CDRTOSConfigure { rtos } ...
+
+-f interface/cmsis-dap.cfg \
+adapter driver cmsis-dap
+
+-f /Users/martin/Library/Arduino15/packages/arduino/hardware/renesas_uno/1.5.1/debugger/select_swd.cfg
+transport select swd
+
+-f /Users/martin/Library/Arduino15/packages/arduino/hardware/renesas_uno/1.5.1/debugger/R7FA4M1AB.cfg
+... various chip configuration stuff...
