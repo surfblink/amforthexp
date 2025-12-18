@@ -9,7 +9,8 @@
 .equ RamStart, 0x20000000
 .equ RamEnd,   0x20008000
 
-.equ FlashStart,  0x00000000
+# Flash starts at 0 but first 32K are occupied by the Uno R4 bootloader
+.equ FlashStart,  0x00004000
 .equ FlashEnd,    0x00040000
 
 .equ datastack_size, 128   
@@ -20,4 +21,20 @@
 
 .equ WANT_IGNORECASE, 0
 
-.include "amforth.s"
+# Inlining arm/amforth.s here to be able to extend vectors/isr
+.include "macros.s"
+.include "preamble.inc"
+.include "user.inc"
+
+.include "vectors.s"
+.include "isr.s"
+
+STARTDICT
+
+.include "dict_prims.inc"
+.include "dict_secs.inc"
+.include "dict_env.inc"
+
+.include "dict_appl.inc"
+
+ENDDICT

@@ -11,7 +11,7 @@ COLON "appl-turnkey", APPLTURNKEY
   
   
 LOOP:
-  .word XT_LED_ON, XT_DOLITERAL, 500, XT_MS
+  .word XT_LED_ON, XT_DOLITERAL, 200, XT_MS
   .word XT_LED_OFF, XT_DOLITERAL, 500, XT_MS
   .word XT_DOLOOP, LOOP
 

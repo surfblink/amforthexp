@@ -7,3 +7,4 @@
 *.list
 **/words/build-info.s
 appl/linux-arm/amforth
+appl/unor4/dev/
