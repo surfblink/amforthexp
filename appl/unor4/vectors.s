@@ -1,4 +1,5 @@
 
+IRQ_VECTORS:
 .include "common/vectors.s"
 
 @ Special interrupt handlers for this particular chip:

@@ -1,4 +1,3 @@
-
 .word RAM_upper_returnstack @ 00: Stack top address
 .word PFA_COLD+1            @ 01: Reset Vector  +1 wegen des Thumb-Einsprunges
 

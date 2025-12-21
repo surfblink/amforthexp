@@ -21,8 +21,8 @@ ARM_CONSTANT "SYST_CSR", SYST_CSR, 0xE000E010
 
 ARM_CONSTANT "SYST_RVR", SYST_RVR, 0xE000E014
 # SYST_RVR SysTick Reload Value Register (lower 24 bits only)
-# The RELOAD value can be any value in the range 0x00000001-0x00FFFFFF. A start value of 0 is
-# possible, but has no effect because the SysTick exception request and COUNTFLAG are activated when counting from 1 to 0.
+# The RELOAD value can be any value in the range 0x00000001-0x00FFFFFF. A start value of 0 is possible,
+# but has no effect because the SysTick exception request and COUNTFLAG are activated when counting from 1 to 0.
 # The RELOAD value is calculated according to its use. For example, to generate a multi-shot
 # timer with a period of N processor clock cycles, use a RELOAD value of N-1. If the SysTick
 # interrupt is required every 100 clock pulses, set RELOAD to 99.
@@ -50,7 +50,7 @@ ARM_COLON "delay-init", DELAY_INIT
 
 # Wait for n ticks of the SysTick timer.
 # tick = 1/32.768 kHz = 30.5 us
-# TODO: doesn't seem to handle timer wrap-around
+# TODO: doesn't handle tick counts larger than TIMER_RELOAD_VALUE
 ARM_COLON "delay-ticks", DELAY_TICKS
 @ ( n -- ) wait for n ticks of the timer, tick ~ 30 microseconds
     .word XT_SYST_CVR, XT_FETCH     @ ( n start-ticks )
@@ -67,9 +67,11 @@ DELAY_TICKS_LOOP:
 
 COLON "ms", MS
 @ ( n -- ) wits n milliseconds, 1 ms = 1000/30.5 = 32.78 ticks
-    .word XT_ZERO
-    .word XT_QDOCHECK,XT_DOCONDBRANCH,MS_LEAVE, XT_DODO
+   .word 
 MS_LOOP:
-       .word XT_DOLITERAL, 33, XT_DELAY_TICKS, XT_DOLOOP, MS_LOOP
+    .word XT_1MINUS, XT_DUP, XT_ZEROLESS, XT_DOCONDBRANCH, MS_LEAVE
+    .word XT_DOLITERAL, 33, XT_DELAY_TICKS
+    .word XT_DOBRANCH, MS_LOOP
 MS_LEAVE:
-    .word XT_EXIT
+    .word XT_DROP, XT_EXIT
+

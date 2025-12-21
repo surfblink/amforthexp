@@ -6,7 +6,7 @@
     "configurations": [
         {
             "cwd": "${workspaceRoot}/appl/unor4",
-            "executable": "unor4.elf",
+            "executable": "build/unor4.elf",
             "name": "Debug with OpenOCD",
             "request": "launch",
             "type": "cortex-debug",
@@ -15,15 +15,18 @@
             "configFiles": [
                 "cortex-debug/extension/support/openocd-helpers.tcl",
                 "tools/openocd/0.11.0-arduino2/share/openocd/scripts/interface/cmsis-dap.cfg",
-                "hardware/renesas_uno/1.5.1/debugger/select_swd.cfg",
-                "hardware/renesas_uno/1.5.1/debugger/R7FA4M1AB.cfg"
+                "dev/select_swd.cfg",
+                "dev/R7FA4M1AB.cfg"
             ],
             "svdFile": "${workspaceRoot}/appl/unor4/dev/R7FA4M1AB.svd",
             "searchDir": [
                 "/Users/martin/Library/Arduino15/packages/arduino/",
                 "/Applications/Arduino IDE.app/Contents/Resources/app/plugins"
             ],
-            "symbolFiles": [ "${workspaceFolder}/appl/unor4/dev/arduino-renesas-bootloader.elf" ],
+            "symbolFiles": [ 
+                "build/unor4.elf",
+                "dev/arduino-renesas-bootloader.elf"
+            ],
             "showDevDebugOutput": "none",
             "breakAfterReset": true,
         },
