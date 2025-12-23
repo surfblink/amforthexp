@@ -50,31 +50,31 @@ ARM_COLON "delay-init", DELAY_INIT
 
 # Wait for n ticks of the SysTick timer.
 # tick = 1/32.768 kHz = 0.00003051757812 s ~ 30.5 us
-# TODO: doesn't handle tick counts larger than RA4M1_TIMER_RELOAD_VALUE
-#   which translates to about 512 seconds max delay
+# Clamps n to be no more than RA4M1_TIMER_RELOAD_VALUE
+# which translates to about 512 seconds max delay
 ARM_COLON "delay-ticks", DELAY_TICKS
-@ ( n -- ) wait for n ticks of the timer, tick ~ 30 microseconds
+@ ( n -- ) waits for n ticks of the timer, tick ~ 30 microseconds
+    # make sure n is no more than RA4M1_TIMER_RELOAD_VALUE
+    .word XT_DOLITERAL, RA4M1_TIMER_RELOAD_VALUE, XT_AND
     .word XT_SYST_CVR, XT_FETCH     @ ( n start-ticks )
 DELAY_TICKS_LOOP:
       .word XT_PAUSE, XT_2DUP
       .word XT_SYST_CVR, XT_FETCH, XT_MINUS     @ ( n start-ticks n elapsed-ticks )
-      # need to handle timer wrapping around zero
-      .word XT_DUP, XT_ZEROLESS, XT_DOCONDBRANCH, 1f
+      # need to handle timer wrapping around zero, i.e elapsed ticks is negative
+      .word XT_DUP, XT_ZEROLESS, XT_DOCONDBRANCH, DELAY_CHECK_ELAPSED_TICKS
       # if elapsed ticks are negative, add the reload value
       .word XT_DOLITERAL, RA4M1_TIMER_RELOAD_VALUE, XT_PLUS
-      # otherwise check if n < elapsed-ticks
-1:    .word XT_UGREATER, XT_DOCONDBRANCH, DELAY_TICKS_LOOP
+DELAY_CHECK_ELAPSED_TICKS:
+      # otherwise if n < elapsed-ticks exit
+      .word XT_UGREATER, XT_NOT, XT_DOCONDBRANCH, DELAY_TICKS_LOOP
     .word XT_2DROP
 .word XT_EXIT
 
 
 .equ RA4M1_MS_TICKS, 33
 # Number of timer ticks per millisecond
-# TODO: Somethings is off here. Calculating based on the SYSTICCLK frequency (32768 Hz),
-#   1 ms should be about 33 ticks:
-#       1 tick = 30.5 us
-#       1 ms = 1000 us / 30.5 us = 32.78 ticks
-#   In reality it seems to be at least 100 times more, wat?
+#   1 tick = 30.5 us
+#   1 ms = 1000 us / 30.5 us = 32.78 ticks
 
 COLON "ms", MS
 @ ( n -- ) waits n milliseconds

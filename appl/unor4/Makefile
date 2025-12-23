@@ -49,7 +49,7 @@ clean:
 # Note: it seems only the Arduino version of bossac works with UNO R4 (https://github.com/arduino/BOSSA)
 upload: build/unor4.bin touch1200bps
 	touch1200bps/touch1200bps /dev/$(PORT)
-	$(BOSSAC) --debug --port=$(PORT) --write build/unor4.bin
+	$(BOSSAC) --debug --port=$(PORT) --write build/unor4.bin --reset
 
 touch1200bps: touch1200bps/*
 	cd ./touch1200bps && go build

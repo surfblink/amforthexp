@@ -12,8 +12,8 @@ COLON "appl-turnkey", APPLTURNKEY
   
 # for now just flash the LED forever
 LED_BLINK_LOOP:
-  .word XT_LED_ON, XT_DOLITERAL, 50000, XT_MS
-  .word XT_LED_OFF, XT_DOLITERAL, 50000, XT_MS
+  .word XT_LED_ON, XT_DOLITERAL, 200, XT_MS
+  .word XT_LED_OFF, XT_DOLITERAL, 800, XT_MS
   .word XT_DOLOOP, LED_BLINK_LOOP
 
 .word XT_EXIT
