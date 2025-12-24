@@ -1,5 +1,15 @@
 import gdb
 
+# TODO: we should be able to read these from the symbol table
+FlashStart = 0x00004000
+FlashEnd = 0x00040000
+RAM_lower_datastack = 0x20000000
+RAM_upper_datastack = 0x20000080
+RAM_lower_returnstack = 0x20000080
+RAM_upper_returnstack = 0x20000100
+RAM_lower_userarea = 0x20000100
+RAM_upper_userarea = 0x20000188
+
 # GdbCommandWindow can be used to define a TUI window
 # that invokes a GDB command to produce its contents.
 # See ForthParameterStack and ForthReturnStack for examples.
@@ -8,6 +18,7 @@ class GdbCommandWindow:
     def __init__(self, tui_window): 
         self._tui_window = tui_window 
         tui_window.title = self.title
+        gdb.events.before_prompt.connect(self.render)
 
     def get_contents(self):
         try:
@@ -18,11 +29,11 @@ class GdbCommandWindow:
     def render(self): 
         if not self._tui_window.is_valid(): 
             return 
-        self._tui_window.write(self.get_contents())
+        self._tui_window.write(self.get_contents(), True)
 
-class ForthParameterStack(GdbCommandWindow):
-    title = "Parameter Stack"
-    gdb_command = ".s"
+# class ForthParameterStack(GdbCommandWindow):
+#     title = "Parameter Stack"
+#     gdb_command = ".s"
 
 class ForthReturnStack(GdbCommandWindow):
     title = "Return Stack"
@@ -35,6 +46,7 @@ class ForthRegisterWindow:
     def __init__(self, tui_window): 
         self._tui_window = tui_window 
         tui_window.title = "Forth Registers"
+        gdb.events.before_prompt.connect(self.render)
 
     def prefix(self, name, fName = None):
         if fName:
@@ -49,7 +61,11 @@ class ForthRegisterWindow:
         reg = frame.read_register(name)
         dec = reg.format_string(format="d")
         hex = reg.format_string(format="x")
-        return f"{self.prefix(name, fName)}{dec} {hex}"
+        if 0 <= reg and reg <= 0xFFFF:
+            bin = reg.format_string(format="t")
+            return f"{self.prefix(name, fName)}{dec} {hex} {bin}"
+        else:
+            return f"{self.prefix(name, fName)}{dec} {hex}"
 
     def addres_register(self, frame, name, fName = None):
         reg = frame.read_register(name)
@@ -98,7 +114,53 @@ class ForthRegisterWindow:
             contents = self.get_contents()
         except gdb.error as exc: 
             contents = str(exc)
-        self._tui_window.write(contents)
+        self._tui_window.write(contents, True)
+
+# ForthParameterStack shows the contents of the PSP
+class ForthParameterStack: 
+
+    def __init__(self, tui_window): 
+        self._tui_window = tui_window 
+        tui_window.title = "Forth Parameter Stack"
+        gdb.events.before_prompt.connect(self.render)
+    
+    def value(self, val):
+        # If val is in the flash code range, treat it as address
+        if FlashStart <= val and val < FlashEnd:
+            return val.format_string(format="a")
+        dec = val.format_string(format="d")
+        hex = val.format_string(format="x")
+        if 0 <= val and val <= 0xFFFF:
+            # include binary format if val is sufficiently small
+            bin = val.format_string(format="t")
+            return f"{dec} {hex} {bin}"
+        else: 
+            return f"{dec} {hex}"
+
+    def get_contents(self):
+        frame = gdb.selected_frame()
+        if frame is None:
+            return "no frame selected"
+        tos = frame.read_register("r6")
+        # TODO: need to detect when stack is empty
+        lines = [ f"r6/TOS:\t\t{self.value(tos)}" ]
+        psp = frame.read_register("r7")
+        # cast psp from int to int* so that we can dereference it
+        psp = psp.cast(psp.type.pointer())
+        while psp < RAM_upper_datastack:
+            addr = psp.format_string(format="x")
+            lines.append(f"{addr}:\t{self.value(psp.dereference())}")
+            psp += 1
+        return "\n".join(lines)
+
+    def render(self): 
+        if not self._tui_window.is_valid(): 
+            return
+        try:
+            contents = self.get_contents()
+        except gdb.error as exc: 
+            contents = str(exc)
+        self._tui_window.write(contents, True)
 
 gdb.register_window_type("fps", ForthParameterStack)
 gdb.register_window_type("frs", ForthReturnStack)

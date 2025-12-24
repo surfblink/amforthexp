@@ -42,8 +42,9 @@ end
 
 source ./gdb-amforth.py
 
-#
-# create a new tui layout for forth
+# create a new tui layout for AmForth
 # tui new-layout forth regs 15 {-horizontal src 1 asm 1} 20 status 0 cmd 20
 # tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
 tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3  { fregs 2 fps 1 frs 1 } 1 } 1
+layout forth
+focus cmd
