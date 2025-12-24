@@ -1,0 +1,122 @@
+import gdb
+
+# GdbCommandWindow can be used to define a TUI window
+# that invokes a GDB command to produce its contents.
+# See ForthParameterStack and ForthReturnStack for examples.
+class GdbCommandWindow: 
+
+    def __init__(self, tui_window): 
+        self._tui_window = tui_window 
+        tui_window.title = self.title
+
+    def get_contents(self):
+        try:
+            return gdb.execute(self.gdb_command, to_string=True)
+        except gdb.error as exc: 
+            return str(exc)
+
+    def render(self): 
+        if not self._tui_window.is_valid(): 
+            return 
+        self._tui_window.write(self.get_contents())
+
+class ForthParameterStack(GdbCommandWindow):
+    title = "Parameter Stack"
+    gdb_command = ".s"
+
+class ForthReturnStack(GdbCommandWindow):
+    title = "Return Stack"
+    gdb_command = ".r"
+
+# ForthRegisterWindow is a custom register view
+# showing registers based on what they are used for in AmForth.
+class ForthRegisterWindow: 
+
+    def __init__(self, tui_window): 
+        self._tui_window = tui_window 
+        tui_window.title = "Forth Registers"
+
+    def prefix(self, name, fName = None):
+        if fName:
+            if len(fName) > 3:
+                return f"{name}/{fName}:\t"
+            else:
+                return f"{name}/{fName}:\t\t"
+        else:
+            return f"{name}:\t\t"
+    
+    def value_register(self, frame, name, fName = None):
+        reg = frame.read_register(name)
+        dec = reg.format_string(format="d")
+        hex = reg.format_string(format="x")
+        return f"{self.prefix(name, fName)}{dec} {hex}"
+
+    def addres_register(self, frame, name, fName = None):
+        reg = frame.read_register(name)
+        addr = reg.format_string(format="a")
+        return f"{self.prefix(name, fName)}{addr}"
+
+    def status_register(self, frame, name):
+        reg = frame.read_register(name)
+        hex = reg.format_string(format="x")
+        msb = reg.bytes[3]
+        flags = 'N' if msb & 0x80 else '.'
+        flags += 'Z' if msb & 0x40 else '.'
+        flags += 'C' if msb & 0x20 else '.'
+        flags += 'V' if msb & 0x10 else '.'
+        flags += 'Q' if msb & 0x08 else '.'
+        return f"{self.prefix(name)}{flags}... {hex}"
+
+    def get_contents(self):
+        frame = gdb.selected_frame()
+        if frame is None:
+            return "no frame selected"
+        lines = [
+            self.value_register(frame, "r1"),
+            self.value_register(frame, "r2"),
+            self.value_register(frame, "r3"),
+            self.value_register(frame, "r4"),
+            self.value_register(frame, "r5"),
+            self.value_register(frame, "r6", "TOS"),
+            self.addres_register(frame, "r7", "PSP"),
+            self.addres_register(frame, "r8", "FORTHW"),
+            self.addres_register(frame, "r9", "FORTHIP"),
+            self.addres_register(frame, "r10", "UP"),
+            self.value_register(frame, "r11", "RLINDEX"),
+            self.value_register(frame, "r12", "RLLIMIT"),
+            self.addres_register(frame, "sp"),
+            self.addres_register(frame, "lr"),
+            self.addres_register(frame, "pc"),
+            self.status_register(frame, "xPSR"),
+        ]
+        return "\n".join(lines)
+
+    def render(self): 
+        if not self._tui_window.is_valid(): 
+            return
+        try:
+            contents = self.get_contents()
+        except gdb.error as exc: 
+            contents = str(exc)
+        self._tui_window.write(contents)
+
+gdb.register_window_type("fps", ForthParameterStack)
+gdb.register_window_type("frs", ForthReturnStack)
+gdb.register_window_type("fregs", ForthRegisterWindow)
+
+# GDB Python API Notes
+#
+# To read memory: gdb.selected_inferior().read_memory(addr, length)
+# returns memoryview which is a sort of bytearray see dir(memoryview)
+# use gdb.format_address(address) to print address with symbol
+#
+#
+# To read register: gdb.selected_frame().read_register("r6")
+# returns gdb.Value
+# to print value in hex use .format_string(format="x")
+#
+# gdb.lookup_type("unsigned int")
+# gdb.selected_inferior().architecture()
+
+# References
+# https://undo.io/resources/enhance-gdb-with-tui/

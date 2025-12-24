@@ -8,7 +8,7 @@ define .r
     # location of the next XT to run after EXIT
     x/a $frame
     # next XT to run after EXIT
-    x/a *(int)$frame
+    # x/a *(int)$frame
     set $frame = $frame + 4
   end
 end
@@ -26,11 +26,24 @@ define .s
   end
 end
 
+# to help stepping through colon words, put a breakpoint at DO_EXECUTE
+# and add commands to step twice to get into the next word's code.
+# You can then move to the next word with 'continue'.
+# Use 'disable/enable' to (de)activate the breakpoint.
+define bde
+  hbreak DO_EXECUTE
+  commands
+    step 2
+  end
+end
+
 # TUI for debugging
 # ref: https://undo.io/resources/enhance-gdb-with-tui/
+
+source ./gdb-amforth.py
+
 #
 # create a new tui layout for forth
 # tui new-layout forth regs 15 {-horizontal src 1 asm 1} 20 status 0 cmd 20
-tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
-# start the forth layout
-layout forth
+# tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
+tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3  { fregs 2 fps 1 frs 1 } 1 } 1

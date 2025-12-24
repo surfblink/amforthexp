@@ -72,13 +72,12 @@ ocd: build/unor4.elf
 
 # Start gdb and connect to OpenOCD
 gdb: build/unor4.elf
-	$(CROSS)gdb -tui build/unor4.elf \
-    -ex "layout asm" \
-	-ex "layout reg" \
-	-ex "target extended-remote localhost:50000"
+	$(CROSS)gdb-py -tui build/unor4.elf \
+	-ex "target extended-remote localhost:50000" \
+	-ex "layout forth" \
+	-ex "focus cmd"
 # 	-ex "b PFA_LED_INIT" \
 # 	-ex "monitor reset"
-
 
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/
