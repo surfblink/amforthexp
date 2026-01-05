@@ -3,25 +3,68 @@
 # * RA4M1 Group: User's Manual (32-bit): 28. Serial Communications Interface (SCI)
 
 # From github.com/arduino/uno-r4-wifi-usb-bridge/UNOR4USBBridge/UNOR4USBBridge.ino
+#   Serial refers to tinyUSB CDC port
 #   Serial1 refers to gpio 20/21 ( -> will become Serial object in RA4 variant P109 / P110) SCI9
 #   Serial2 refers to gpio 2/3 ( -> will become SerialNina object in RA4 variant P501 / P502) SCI1
+#   #define SERIAL_USER            USBSerial
+#   #define SERIAL_USER_INTERNAL   Serial
 #   #define SERIAL_AT              Serial1
+#   SERIAL_USER.begin(115200);
+#   SERIAL_USER_INTERNAL.begin(115200, SERIAL_8N1, 44, 43);
 #   SERIAL_AT.begin(115200, SERIAL_8N1, 6, 5);
+#   loop() copies bytes between SERIAL_USER and SERIAL_USER_INTERNAL
+#   atLoop() listens for AT commands at SERIAL_AT
 
 .include "words/sci.s"
 
-# SCI9 Pins 
-.equ RA4M1_P109PFS, 0x40040840 + 4 * 9
-.equ RA4M1_P110PFS, 0x40040840 + 4 * 10
+.equ RA4M1_MSTPCRB, 0x40047000 @ Module Stop Control Register B
+.equ RA4M1_MSTPCRB22, 1 << 22  @ [22] SCI9 Module Stop (reset = 1)
+.equ RA4M1_MSTPCRB29, 1 << 29  @ [29] SCI2 Module Stop (reset = 1)
+.equ RA4M1_MSTPCRB30, 1 << 30  @ [30] SCI1 Module Stop (reset = 1)
+.equ RA4M1_MSTPCRB31, 1 << 31  @ [31] SCI0 Module Stop (reset = 1)
+
+# SCI9
+.equ RA4M1_P109PFS, 0x40040840 + 4 * 9  @ TXD9 pin
+.equ RA4M1_P110PFS, 0x40040840 + 4 * 10 @ RXD9 pin
+
+# SCI1 Pins 
+@ .equ RA4M1_P501PFS, 0x40040940 + 4 * 1  @ TXD1
+@ .equ RA4M1_P502PFS, 0x40040940 + 4 * 2  @ RXD1
+
+# UART pins and registers for SCI9
+.equ UART_TXD, RA4M1_P109PFS
+.equ UART_RXD, RA4M1_P110PFS
+.equ UART_STOP, RA4M1_MSTPCRB22
+.equ UART_SCR, SCI9_SCR
+.equ UART_BRR, SCI9_BRR
+.equ UART_RDR, SCI9_RDR
+.equ UART_TDR, SCI9_TDR
+.equ UART_SSR, SCI9_SSR
+
+# UART pins and registers SCI1
+@ .equ UART_TXD, RA4M1_P501PFS
+@ .equ UART_RXD, RA4M1_P502PFS
+@ .equ UART_SCR, SCI1_SCR
+@ .equ UART_BRR, SCI1_BRR
+@ .equ UART_RDR, SCI1_RDR
+@ .equ UART_TDR, SCI1_TDR
+@ .equ UART_SSR, SCI1_SSR
+
 
 CODEWORD  "uart-init", UART_INIT
+
+@ Make sure SCI9 module is not stopped
+  ldr r0, =RA4M1_MSTPCRB
+  ldr r1, [r0]
+  bic r1, r1, #UART_STOP
+  str r1, [r0]
 
 @ Following 28.3.7. SCI Initialization in Asynchronous Mode
 @ Omitting steps that should be set the prescribed way after reset
 @ (see also Apendix 3 / Register descriptions)
 
 @ [ 0 ] Set SCR.TIE, RIE, TE, RE, and TEIE to 0
-  ldr r0, =SCI9_SCR
+  ldr r0, =UART_SCR
   mov r1, #0
   strb r1, [r0]
 
@@ -37,8 +80,8 @@ CODEWORD  "uart-init", UART_INIT
 @ [ 6 ] Write a value associated with the bit rate to BRR.
 @ PCLKA 48MHz, B = 115200 bps, n = 0
 @ N = PCLKA * 10^6 / (64 * 2^2n-1 * B) - 1 = 48000000 / (64 * 2^-1 * 115200) - 1 =
-@   = 48000000 / (32 * 115200) -1 ~ 12.02
-  ldr r0, =SCI9_BRR
+@   = 48000000 / (32 * 115200) - 1 ~ 12.02
+  ldr r0, =UART_BRR
   mov r1, #12   @ N = 12 computed above for 115200 bps
   strb r1, [r0]
 
@@ -49,15 +92,15 @@ CODEWORD  "uart-init", UART_INIT
 @ [ 8 ] Specify the I/O port to enable input and output functions as required for TXDn, RXDn, and SCKn pins.
   mov r1, #0  @ Set both pins to SCI peripheral function
   movt r1, #0x0501  @ [24:28]PSEL = SCI(5) & [16]PMR = peripheral function(1)
-  ldr r0, =RA4M1_P109PFS
+  ldr r0, =UART_TXD
   str r1, [r0]
-  ldr r0, =RA4M1_P110PFS
+  ldr r0, =UART_RXD
   str r1, [r0]
 
 @ [ 9 ] Set SCR.TE or SCR.RE to 1, also set SCR.TIE and SCR.RIE.
 @ Setting SCR.TE and SCR.RE allows TXDn and RXDn to be used.
 @ Not using interrupts so we'll be handling TE/RE in the read/write routines
-  ldr r0, =SCI9_SCR
+  ldr r0, =UART_SCR
   mov r1, #0x30   @ [05]TE || [04]RE
   strb r1, [r0]
 
@@ -73,7 +116,7 @@ NEXT
 
    savetos
   @ Don't read SCI_SSR_RDRF, it was already read by SERIAL_KEYQ and flag is now 0.
-  ldr r0, =SCI9_RDR  @ read RDR
+  ldr r0, =UART_RDR  @ read RDR
   ldrb tos, [r0]  
 NEXT
 
@@ -82,7 +125,7 @@ NEXT
 @ -----------------------------------------------------------------------------
    savetos
    mov tos, #0
-   ldr r0, =SCI9_SSR
+   ldr r0, =UART_SSR
    ldrb r1, [r0]
    ands r1, #SCI_SSR_RDRF
    @ TODO: error handling
@@ -96,7 +139,7 @@ NEXT
 @ -----------------------------------------------------------------------------
 
   @ Don't read SCI_SSR_TDRE, it was already read by SERIAL_EMITQ and flag is now 0.
-   ldr r0, =SCI9_TDR
+   ldr r0, =UART_TDR
    strb tos, [r0]
    loadtos
 NEXT
@@ -106,7 +149,7 @@ NEXT
 @ -----------------------------------------------------------------------------
    savetos
    mov tos, #0
-   ldr r0, =SCI9_SSR
+   ldr r0, =UART_SSR
    ldr r1, [r0]
    ands r1, #SCI_SSR_TDRE
    bne 1f
