@@ -40,6 +40,23 @@ class ForthReturnStack(GdbCommandWindow):
     title = "Return Stack"
     gdb_command = ".r"
 
+def value(val):
+    # If val is in the flash code range, treat it as address
+    if FlashStart <= val and val < FlashEnd:
+        return val.format_string(format="a")
+    dec = val.format_string(format="d")
+    hex = val.format_string(format="x")
+    if 0 <= val and val <= 0xFFFF:
+        # include binary format if val is sufficiently small
+        bin = val.format_string(format="t")
+        if val <= 0x100:
+            char = val.format_string(format="c")
+            return f"{char} {hex} {bin}"
+        else:
+            return f"{dec} {hex} {bin}"
+    else: 
+        return f"{dec} {hex}"
+
 # ForthRegisterWindow is a custom register view
 # showing registers based on what they are used for in AmForth.
 class ForthRegisterWindow: 
@@ -60,13 +77,7 @@ class ForthRegisterWindow:
     
     def value_register(self, frame, name, fName = None):
         reg = frame.read_register(name)
-        dec = reg.format_string(format="d")
-        hex = reg.format_string(format="x")
-        if 0 <= reg and reg <= 0xFFFF:
-            bin = reg.format_string(format="t")
-            return f"{self.prefix(name, fName)}{dec} {hex} {bin}"
-        else:
-            return f"{self.prefix(name, fName)}{dec} {hex}"
+        return f"{self.prefix(name, fName)}{value(reg)}"
 
     def addres_register(self, frame, name, fName = None):
         reg = frame.read_register(name)
@@ -125,19 +136,6 @@ class ForthParameterStack:
         self._tui_window = tui_window 
         tui_window.title = "Forth Parameter Stack"
         gdb.events.before_prompt.connect(self.render)
-    
-    def value(self, val):
-        # If val is in the flash code range, treat it as address
-        if FlashStart <= val and val < FlashEnd:
-            return val.format_string(format="a")
-        dec = val.format_string(format="d")
-        hex = val.format_string(format="x")
-        if 0 <= val and val <= 0xFFFF:
-            # include binary format if val is sufficiently small
-            bin = val.format_string(format="t")
-            return f"{dec} {hex} {bin}"
-        else: 
-            return f"{dec} {hex}"
 
     def get_contents(self):
         frame = gdb.selected_frame()
@@ -145,13 +143,13 @@ class ForthParameterStack:
             return "no frame selected"
         tos = frame.read_register("r6")
         # TODO: need to detect when stack is empty
-        lines = [ f"r6/TOS:\t\t{self.value(tos)}" ]
+        lines = [ f"r6/TOS:\t\t{value(tos)}" ]
         psp = frame.read_register("r7")
         # cast psp from int to int* so that we can dereference it
         psp = psp.cast(psp.type.pointer())
         while psp < RAM_upper_datastack:
             addr = psp.format_string(format="x")
-            lines.append(f"{addr}:\t{self.value(psp.dereference())}")
+            lines.append(f"{addr}:\t{value(psp.dereference())}")
             psp += 1
         return "\n".join(lines)
 

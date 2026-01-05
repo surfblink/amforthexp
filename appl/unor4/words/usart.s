@@ -111,7 +111,7 @@ NEXT
 .equ SCI_SSR_TDRE, 0x80 @ Transmit Data Empty
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "serial-key", SERIAL_KEY
+CODEWORD  "serial-key", SERIAL_KEY
 @ -----------------------------------------------------------------------------
 
    savetos
@@ -121,7 +121,8 @@ NEXT
 NEXT
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "serial-key?", SERIAL_KEYQ
+CODEWORD  "serial-key?", SERIAL_KEYQ
+@ returns false if there is another character ready to be read
 @ -----------------------------------------------------------------------------
    savetos
    mov tos, #0
@@ -129,7 +130,7 @@ NEXT
    ldrb r1, [r0]
    ands r1, #SCI_SSR_RDRF
    @ TODO: error handling
-   bne 1f
+   beq 1f
      mvns tos, tos
 1: 
 NEXT
@@ -145,14 +146,19 @@ NEXT
 NEXT
 
 @ -----------------------------------------------------------------------------
-  CODEWORD  "serial-emit?", SERIAL_EMITQ
+CODEWORD  "serial-emit?", SERIAL_EMITQ
+@ returns false if we are ready to emit another character
+@ WARNING: TDRE is only set when the first byte is transferred from TDR to TSR
+@  so polling it doesn't work correctly before the first byte is sent.
+@  It cannot be set to 1 so a workaround is to emit the first character
+@  without checking SERIAL_EMITQ (see appl-turnkey.s)
 @ -----------------------------------------------------------------------------
    savetos
    mov tos, #0
    ldr r0, =UART_SSR
-   ldr r1, [r0]
+   ldrb r1, [r0]
    ands r1, #SCI_SSR_TDRE
-   bne 1f
+   beq 1f
      mvn tos, tos
 1:
 NEXT
