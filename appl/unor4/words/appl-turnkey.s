@@ -1,3 +1,6 @@
+CODEWORD  "halt", HALT
+  wfi @ there is not halt instruction, but wait for interrupt should be close enough
+NEXT
 
 COLON "appl-turnkey", APPLTURNKEY
   .word XT_DECIMAL

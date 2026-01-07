@@ -1,7 +1,7 @@
 # This should get autoloaded by GDB when started with `make gdb`
-# Otherwise can also be loaded with source ./.gdbinit
+# Otherwise can also be loaded with `source .gdbinit`
 
-# command dump the return stack
+# command to dump the return stack
 define .r
   set var $frame = $sp
   while $frame < 0x20000100
@@ -38,13 +38,17 @@ define bde
 end
 
 # TUI for debugging
-# ref: https://undo.io/resources/enhance-gdb-with-tui/
 
-source ./gdb-amforth.py
-
-# create a new tui layout for AmForth
+# Simple layouts using just the default GDB windows: src, asm, cmd
 # tui new-layout forth regs 15 {-horizontal src 1 asm 1} 20 status 0 cmd 20
 # tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
+
+# Custom AmForth layout with Forth stacks and customized register windows.
+# This requires Python enabled GDB and the correct version of Python installed on the system.
+# ref: https://undo.io/resources/enhance-gdb-with-tui/
+source ./gdb-amforth.py
 tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3  { fregs 2 fps 1 frs 1 } 1 } 1
+
+# Enable the forth layout and set focus on the command window
 layout forth
 focus cmd
