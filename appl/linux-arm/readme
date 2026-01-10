@@ -3,10 +3,14 @@ Short Notice for the bravest
 
 Required packages (Ubuntu 18.04 LTS standard repo)
 
-  binutils-arm-linux-gnueabi for build
-  qemu-system-arm and qemu-user-static to run it on a PC 
+* to build: binutils-arm-linux-gnueabi (hf on MacOSX)
+* to run on a PC: 
+  * qemu-system-arm and qemu-user-static, or
+  * arm/v7 capable container runtime
 
 Build with "make". 
 
-Test it with "make run" with the qemu installed. or copy 
-the binary to a Raspberry PI
+Test it with "make qrun" with the qemu installed,
+or "make drun" to run with arm/v7 capable container runtime,
+or copy the binary to a Raspberry PI
+
