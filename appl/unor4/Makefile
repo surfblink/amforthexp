@@ -2,7 +2,7 @@
 REVISION := $(shell git status -bs -u no|tr / -)
 CROSS=arm-none-eabi-
 LANG=C
-BOARD = unor4
+BOARD = UNOR4
 
 # This port was developed on a MacBook with some tools borrowed from Arduino IDE.
 # You will likely need to adjust PORT, BOSSAC and OPENOCD to suite your configuration.
@@ -18,15 +18,15 @@ BOSSAC=$(ARDUINO_TOOLS)/bossac/1.9.1-arduino5/bossac
 OPENOCD = $(ARDUINO_TOOLS)/openocd/0.11.0-arduino2
 
 
-all: build/unor4.hex build/unor4.lst build/unor4.sym
+all: build/amforth.hex build/amforth.lst build/amforth.sym
 
 buildinfo: 
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/unor4.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
+	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
 
-build/unor4.elf: build/unor4.o
+build/amforth.elf: build/amforth.o
 	$(CROSS)ld -T memmap.ld $< -o $@
 
 build/%.lst: build/%.elf
@@ -56,9 +56,9 @@ clean:
 # Alternatively the touch1200bps utility can achieve the same as well.
 #
 # Note: it seems only the Arduino version of bossac works with UNO R4 (https://github.com/arduino/BOSSA)
-upload: build/unor4.bin touch1200bps
+upload: build/amforth.bin touch1200bps
 	touch1200bps/touch1200bps /dev/$(PORT)
-	$(BOSSAC) --debug --port=$(PORT) --write build/unor4.bin --reset
+	$(BOSSAC) --debug --port=$(PORT) --write build/amforth.bin --reset
 
 # This builds the touch1200bps binary; requires a reasonably recent version of Golang installed.
 # This is used above for the upload target.
@@ -70,7 +70,7 @@ PHONY: buildinfo clean upload touch1200bps ocd gdb
 # Start OpenOCD
 # You can connect to the OpenOCD telnet port with: nc localhost 50002
 # You can also send commands to OpenOCD through GDB's 'monitor' command
-# ocd: build/unor4.elf
+# ocd: build/amforth.elf
 ocd:
 	$(OPENOCD)/bin/openocd -c "gdb_port 50000" -c "tcl_port 50001" -c "telnet_port 50002" \
 	-f $(OPENOCD)/share/openocd/scripts/interface/cmsis-dap.cfg \
@@ -80,9 +80,9 @@ ocd:
 # Start gdb and connect to OpenOCD
 # Make sure .gdbinit is sourced to get additional commands and customized TUI
 # If you don't have/want python enabled GDB you need to tweak .gdbinit and drop the -py below
-# gdb: build/unor4.elf
+# gdb: build/amforth.elf
 gdb:
-	$(CROSS)gdb-py -tui build/unor4.elf --quiet \
+	$(CROSS)gdb-py -tui build/amforth.elf --quiet \
 	-ex "target extended-remote localhost:50000"
 
 # More debugging references
