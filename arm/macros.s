@@ -41,9 +41,9 @@ rlooplimit .req r12
 .macro STARTDICT
 .equ FLASH_START, .
 .word 0
-97: @ arm-wordlist
-98: @ environment wordlist
-99: @ forth-wordlist
+97: @ top of arm-wordlist, local label updated by ARM_HEADER macro
+98: @ top of environment wordlist, local label updated by ENVIRONMENT macro
+99: @ top of forth-wordlist, local label updated by HEADER macro
 .endm
 
 @ save the beginning of the wordlists
@@ -81,15 +81,15 @@ VALUE "forth-wordlist", FORTH_WORDLIST, 99b
 .equ Flag_variable,   Flag_ramallot| 1           
 .equ Flag_2variable,  Flag_ramallot| 2
 
-.macro HEADER Flags, Name, Label, PFA
+.macro HEADER Flags, Name, Label, XT
     .p2align 2
 VE_\Label:
-    .word 99b         @ Insert Link
+    .word 99b         @ Link to previous word, refer back to the latest word in forth-wordlist
 99: .word \Flags      @ Flag field
     .byte 8f - 7f     @ Calculate length of name field
 7:  .ascii "\Name"    @ Insert name string
 8:  .p2align 2        @ Realign
-   XT_\Label: .word \PFA
+   XT_\Label: .word \XT
    PFA_\Label: 
 .endm
 

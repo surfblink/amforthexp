@@ -1,0 +1,8 @@
+{
+    "cortex-debug.variableUseNaturalFormat": false,
+    "arm.general.instructionSet": "A32",
+    "files.associations": {
+        "*.s": "arm",
+        "*.inc": "arm"
+    }
+}
