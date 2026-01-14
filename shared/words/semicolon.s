@@ -11,6 +11,6 @@ IMMED "\x3b", SEMICOLON
 #    .word XT_COMMA
 # end addition
 #    .word XT_TOFLUSH  # this may be the correct place !!!
-    .word XT_EXIT     # 
+    .word XT_EXIT
 
 

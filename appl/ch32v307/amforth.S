@@ -42,7 +42,7 @@
 .include "macros.inc"       # macros for everything
 .include "user.inc"         # user area configuration 
 
-STARTDICTFIX
+STARTDICT
 
 .include "dict_prims.inc" 
 .include "dict_secs.inc"

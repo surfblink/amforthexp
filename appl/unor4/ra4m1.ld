@@ -22,20 +22,4 @@ MEMORY
   DATA_FLASH (rx) : ORIGIN = DATA_FLASH_START, LENGTH = DATA_FLASH_LENGTH
 }
 
-SECTIONS
-{
-
-  amforth : {
-    *(amforth);  /* Daten */
-    *(.text);    /* Text  */
-    *(.data);    /* Daten (dito) */
-  } > FLASH
-
-
-  userdictionary (NOLOAD) : {
-    CACHE_START = . ;
-    *(.bss);    /* Nullen */
-    CACHE_END = . ;
-  } > RAM
-
-}
+INCLUDE amforth32.ld

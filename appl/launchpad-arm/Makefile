@@ -21,7 +21,7 @@ build/%.o: %.asm buildinfo
 
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -T memmap $< -o $@ 
+	$(CROSS)ld -L ../../shared -T launchpad.ld $< -o $@ 
 	$(CROSS)objcopy build/amforth.elf build/amforth.bin -O binary
 
 build/%.hex: build/%.elf

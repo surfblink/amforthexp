@@ -1,4 +1,4 @@
-
+.include "config.inc"
 
 .syntax unified
 .cpu cortex-m4
@@ -22,8 +22,7 @@
 .equ WANT_IGNORECASE, 0
 
 # Inlining arm/amforth.s here to be able to extend vectors/isr
-.include "macros.s"
-.include "preamble.inc"
+.include "macros.inc"
 .include "user.inc"
 
 .include "vectors.s"

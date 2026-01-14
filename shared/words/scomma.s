@@ -7,7 +7,8 @@ COLON "s,", SCOMMA
 	.word 0x100
 	.word XT_WITHIN
 	.word XT_INVERT
-	.word XT_DOCONDBRANCH,SCOMMA_0001 # if
+	.word XT_DOCONDBRANCH,SCOMMA_0001
+	# if
 	.word XT_2DROP
     .word XT_DALIGN
 	.word XT_FINISH
@@ -28,7 +29,8 @@ SCOMMA_0001: # then
 	.word XT_1PLUS
 	.word XT_R_FETCH
 	.word XT_ZEROEQUAL
-	.word XT_DOCONDBRANCH,SCOMMA_0002 # if
+	.word XT_DOCONDBRANCH,SCOMMA_0002
+	# if
 	.word XT_RDROP
 	.word XT_DROP
     .word XT_DALIGN    
@@ -37,7 +39,8 @@ SCOMMA_0002: # then
 	.word XT_R_FETCH
 	.word XT_2SLASH
 	.word XT_ZERO
-	.word XT_QDOCHECK, XT_DOCONDBRANCH,SCOMMA_0003 # ?do
+	.word XT_QDOCHECK, XT_DOCONDBRANCH,SCOMMA_0003
+	# ?do
 	.word XT_DODO
 SCOMMA_0004: # do
 	.word XT_DUP
@@ -55,7 +58,8 @@ SCOMMA_0004: # do
 	.word XT_DOT
     .word XT_HCOMMA
 	.word XT_1PLUS
-	.word XT_DOLOOP,SCOMMA_0004 # loop
+	.word XT_DOLOOP,SCOMMA_0004
+	# loop
 SCOMMA_0003: # (for ?do IF required) 
 	.word XT_R_FETCH
 	.word XT_TWO
@@ -63,7 +67,8 @@ SCOMMA_0003: # (for ?do IF required)
 	.word XT_DROP
 	.word XT_ZEROEQUAL
 	.word XT_INVERT
-	.word XT_DOCONDBRANCH,SCOMMA_0005 # if
+	.word XT_DOCONDBRANCH,SCOMMA_0005
+	# if
 	.word XT_CFETCH
 	.word XT_DOLITERAL
 	.word 0xff00

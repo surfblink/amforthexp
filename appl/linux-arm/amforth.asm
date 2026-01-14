@@ -1,4 +1,6 @@
 
+.include "config.inc"
+
 .syntax unified
 
 .equ datastack_size, 1024   
@@ -21,8 +23,7 @@ _start:
 
 .thumb
 
-.include "macros.s"
-.include "preamble.inc"
+.include "macros.inc"
 .include "user.inc"
 
 STARTDICT

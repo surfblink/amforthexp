@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
-COLON "ver", DOT_VER # ( -- ) SYSTEM: Show version
+COLON "ver", DOT_VER
+# ( -- ) SYSTEM: Show version
 
 .word XT_ENV_FORTHNAME, XT_TYPE, XT_SPACE
 

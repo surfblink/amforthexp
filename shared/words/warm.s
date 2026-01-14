@@ -28,10 +28,11 @@
 
 #   .word XT_EXIT
 
-COLON "warm", WARM # ( -- ) SYSTEM: Reset Forth (asm build)
+COLON "warm", WARM 
+# ( -- ) SYSTEM: Reset Forth (asm build)
 
-  .word XT_INIT_RAM   # XT_INIT_RAM
-  .word XT_LBRACKET   # XT_LBRACKET
+  .word XT_INIT_RAM   
+  .word XT_LBRACKET 
 
 #  .word XT_WARM_RELOAD
   
@@ -39,8 +40,8 @@ COLON "warm", WARM # ( -- ) SYSTEM: Reset Forth (asm build)
   .word XT_EEPROMDOTWARM
   .word XT_STDDOTUNLOCK
   
-  .word XT_TURNKEY    # XT_TURNKEY
+  .word XT_TURNKEY    
   
-  .word XT_QUIT       # XT_QUIT
+  .word XT_QUIT       
  
-  .word XT_EXIT       # XT_EXIT 
+  .word XT_EXIT       

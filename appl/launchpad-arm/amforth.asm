@@ -1,5 +1,7 @@
 
 
+.include "config.inc"
+
 .syntax unified
 .cpu cortex-m4
 .thumb
@@ -20,9 +22,7 @@
 
 .equ WANT_IGNORECASE, 0
 
-.include "macros.s"
-
-.include "preamble.inc"
+.include "macros.inc"
 .include "user.inc"
 .include "common/vectors.s"
 
@@ -36,7 +36,6 @@ STARTDICT
 .include "dict_prims.inc"
 .include "dict_secs.inc"
 .include "dict_env.inc"
-
 .include "dict_appl.inc"
 
 ENDDICT

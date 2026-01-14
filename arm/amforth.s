@@ -1,9 +1,8 @@
 # This is a template to start from.
 # Copy it into your appl/ directory and modify as needed.
 
-.include "macros.s"
+.include "macros.inc"
 
-.include "preamble.inc"
 .include "user.inc"
 .include "common/vectors.s" 
 .include "common/isr.s"

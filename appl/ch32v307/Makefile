@@ -168,6 +168,9 @@ else
 FLAGS := -march=rv32imafc -mabi=ilp32f -msmall-data-limit=8 -mno-save-restore -Os -Wunused -Wuninitialized -g
 endif
 
+# Needed for the INCLUDE amforth32.ld to work in linked files (-L must preceed the -T !!!)
+FLAGS += -L ../../shared
+
 DEFINES  := -DSYSCLK_FREQ_96MHz
 #ASFLAGS  := $(FLAGS) -x assembler $(INC_FLAGS) -MMD -MP $(DEFINES) 
 ASFLAGS  := $(FLAGS) -x assembler-with-cpp  $(INC_FLAGS) -MMD -MP $(DEFINES) 

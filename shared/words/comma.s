@@ -6,7 +6,8 @@ COLON ",", COMMA
     .word XT_DALIGN
 	.word XT_DP
 	.word XT_MEMMODE
-	.word XT_DOCONDBRANCH,COMMA_0001 # if
+	.word XT_DOCONDBRANCH,COMMA_0001
+	# if
 	.word XT_BANGI
 	.word XT_DOBRANCH,COMMA_0002
 COMMA_0001: # else

@@ -1,0 +1,12 @@
+
+OUTPUT_FORMAT("elf32-littlearm")
+OUTPUT_ARCH(arm)
+
+
+MEMORY
+{
+   FLASH(RX)   : ORIGIN = 0x00000000, LENGTH = 0x40000
+   RAM(WAIL) : ORIGIN = 0x20000000, LENGTH = 0x4000
+}
+
+INCLUDE amforth32.ld
