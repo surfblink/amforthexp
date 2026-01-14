@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 COLON "rec-split", REC_SPLIT
     .word XT_RECTYPE_SPLIT
     .word XT_EXIT

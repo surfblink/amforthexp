@@ -1,30 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-only
 .macro subc dest, sour1, sour2
-  sub x7, \sour1, \sour2
-  sltu x8, \sour1, \sour2
-  sub \dest, x7, x5
-  sltu x9, x7, x5
-  or x5, x8, x9
+  sub t2, \sour1, \sour2
+  sltu s7, \sour1, \sour2
+  sub \dest, t2, t0
+  sltu s8, t2, t0
+  or t0, s7, s8
 .endm
 
 #------------------------------------------------------------------------------
   CODEWORD  "d-", DMINUS # ( 1L 1H 2L 2H )
 #------------------------------------------------------------------------------
-  push x10
+  push a0
 
-  lw x5, 8(x4)
-  lw x6, 0(x4)
+  lw t0, 8(s4)
+  lw t1, 0(s4)
 
-  sub x10, x5, x6
-  sw x10, 8(x4)
+  sub a0, t0, t1
+  sw a0, 8(s4)
 
-  sltu x10, x5, x6
+  sltu a0, t0, t1
 
-  lw x5, 4(x4)
-  sub x3, x5, x3
-  sub x3, x3, x10
+  lw t0, 4(s4)
+  sub s3, t0, s3
+  sub s3, s3, a0
 
-  addi x4, x4, 8
+  addi s4, s4, 8
 
-  pop x10
+  pop a0
 
   NEXT

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 VALUE "forth-recognizer", FORTHRECOGNIZER, PFA_CFG_RECOGNIZER
 

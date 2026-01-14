@@ -1,6 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 CODEWORD "execute",EXECUTE
 
-  mv x17,x3
+  mv s1,s3
   loadtos
   j DO_EXECUTE

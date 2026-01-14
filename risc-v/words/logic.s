@@ -1,54 +1,47 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # Logic.
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "and", AND # ( x1 x2 -- x1&x2 )
-                        # Combines the top two stack elements using bitwise AND.
+  CODEWORD  "and", AND # ( n2 n1 -- n2 & n1 ) LOGIC: TOS is bitwise NOS AND TOS
+
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  and x3, x5, x3
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  and s3, t0, s3
   NEXT
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "or", OR # ( x1 x2 -- x1|x2 )
+  CODEWORD  "or", OR # ( n2 n1 -- n2 | n1 ) LOGIC: TOS is bitwise NOS OR TOS
                        # Combines the top two stack elements using bitwise OR.
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  or x3, x5, x3
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  or s3, t0, s3
   NEXT
 
+
+# I prefer a logical not as below  
 # -----------------------------------------------------------------------------
-  CODEWORD  "xor", XOR # ( x1 x2 -- x1|x2 )
-                        # Combines the top two stack elements using bitwise exclusive-OR.
+#  CODEWORD  "not", NOT # ( x -- ~x )
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  xor x3, x5, x3
-  NEXT
+#  xori s3, s3, -1
+#  NEXT
+
+COLON "not" , NOT # ( f -- ~f ) LOGIC: if f true ~f false (logical not) 
+      .word XT_ZEROEQUAL
+      .word XT_EXIT 
+
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "not", NOT # ( x -- ~x )
+  CODEWORD  "rshift", RSHIFT # ( x n -- x ) LOGIC: shift x right n places (zero fill)
 # -----------------------------------------------------------------------------
-  xori x3, x3, -1
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  srl s3, t0, s3
   NEXT
 
-# -----------------------------------------------------------------------------
-  CODEWORD  "invert", INVERT # ( x -- ~x )
-# -----------------------------------------------------------------------------
-  xori x3, x3, -1
-  NEXT
-
-# -----------------------------------------------------------------------------
-  CODEWORD  "rshift", RSHIFT # ( x n -- x )
-# -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  srl x3, x5, x3
-  NEXT
-
-  CODEWORD  "lshift", LSHIFT # ( x n -- x )
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  sll x3, x5, x3
+  CODEWORD  "lshift", LSHIFT # ( x n -- x ) LOGIC: shift x left n places 
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  sll s3, t0, s3
   NEXT

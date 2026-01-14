@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DEFER ".error", PROMPTERROR, XT_PROMPTERROR_DEFAULT
 

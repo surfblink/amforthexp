@@ -1,8 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "2over", 2OVER # ( 4 3 2 1 -- 4 3 2 1 4 3 )
+  CODEWORD "2over", 2OVER # ( 4 3 2 1 -- 4 3 2 1 4 3 ) STACK: as per stack pattern! 
 # -----------------------------------------------------------------------------
   savetos
-  lw x3, 12(x4)
+  lw s3, 12(s4)
   savetos
-  lw x3, 12(x4)
+  lw s3, 12(s4)
   NEXT

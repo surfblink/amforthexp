@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "search-wordlist",SEARCH_WORDLIST
 
@@ -16,9 +17,9 @@ COLON "search-wordlist",SEARCH_WORDLIST
        .word XT_EXIT
 PFA_SEARCH_WORDLIST1:
       .word XT_DUP
-      .word XT_NFA2CFA
+      .word XT_FFA2CFA
       .word XT_SWAP
-      .word XT_NAME2FLAGS
+# MFD      .word XT_NAME2FLAGS
       .word XT_IMMEDIATEQ
     .word XT_EXIT
 
@@ -27,7 +28,7 @@ NONAME ISWORD
     .word XT_DROP
     .word XT_2DUP
     .word XT_R_FETCH
-    .word XT_NAME2STRING
+    .word XT_FFA2STRING
     .word XT_COMPARE
     .word XT_DOCONDBRANCH,PFA_ISWORD3
       .word XT_R_FROM

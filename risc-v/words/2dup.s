@@ -1,6 +1,7 @@
-CODEWORD "2dup", 2DUP
-  lw x5, 0(x4)
-  addi x4, x4, -8
-  sw x3, 4(x4)
-  sw x5, 0(x4)  
+# SPDX-License-Identifier: GPL-3.0-only
+CODEWORD "2dup", 2DUP # ( n2 n1 -- n2 n1 n2 n1 ) STACK: dup NOS and TOS
+  lw t0, 0(s4)
+  addi s4, s4, -8
+  sw s3, 4(s4)
+  sw t0, 0(s4)  
   NEXT

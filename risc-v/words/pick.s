@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "pick",PICK # ( xu .. x1 x0 u -- xu ... x1 x0 xu )
+  CODEWORD "pick",PICK # ( xu .. ra zero u -- xu ... ra zero xu )
 # -----------------------------------------------------------------------------
-  sll x3, x3, 2
-  add x3, x3, x4
-  lw x3, 0(x3)
+  sll s3, s3, 2
+  add s3, s3, s4
+  lw s3, 0(s3)
   NEXT

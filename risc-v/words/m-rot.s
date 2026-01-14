@@ -1,9 +1,10 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "-rot", MROT # ( x w y -- y x w )
+  CODEWORD "-rot", MROT # ( x w y -- y x w ) STACK: rotate stack so TOS at 3 
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  lw x6, 4(x4)
-  sw x6, 0(x4)
-  sw x3, 4(x4)
-  mv x3, x5
+  lw t0, 0(s4)
+  lw t1, 4(s4)
+  sw t1, 0(s4)
+  sw s3, 4(s4)
+  mv s3, t0
   NEXT

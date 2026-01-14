@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DEFER ".ready", PROMPTREADY, XT_PROMPTREADYDEFAULT
 

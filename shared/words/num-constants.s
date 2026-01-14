@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 CONSTANT "0", ZERO, 0
 CONSTANT "1", ONE, 1
@@ -6,3 +7,7 @@ CONSTANT "4", FOUR, 4
 CONSTANT "-1", MINUSONE, -1
 CONSTANT "true", TRUE, -1
 CONSTANT "false", FALSE, 0
+#
+CONSTANT "cell" , CELL , cellsize
+#
+CONSTANT "first-run" , FIRST_RUN , 0xEFBEADDE      

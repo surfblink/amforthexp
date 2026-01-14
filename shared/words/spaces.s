@@ -1,5 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
-COLON "spaces", SPACES
+COLON "spaces", SPACES # ( n -- ) Emit n spaces 
 
 .word XT_ZERO, XT_MAX
 SPCS1:

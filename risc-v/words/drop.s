@@ -1,5 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
-CODEWORD "drop", DROP
-  lw x3, 0(x4)
-  addi x4, x4, 4
+CODEWORD "drop", DROP # ( n -- ) STACK: Drop TOS (so NOS becomes TOS)
+  lw s3, 0(s4)
+  addi s4, s4, 4
   NEXT

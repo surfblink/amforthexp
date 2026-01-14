@@ -1,8 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "wordlist", WORDLIST
 
-    .word XT_HERE
+    .word XT_DP
     .word XT_DOLITERAL,4
-    .word XT_ALLOT
+    .word XT_DALLOT
     .word XT_DUP,XT_ZERO,XT_SWAP,XT_STORE
     .word XT_EXIT

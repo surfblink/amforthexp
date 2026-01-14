@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "2nip", 2NIP # ( 4 3 2 1 -- 2 1 )
+  CODEWORD "2nip", 2NIP # ( 4 3 2 1 -- 2 1 ) STACK: Remove stack positions 3 & 4 
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 8
-  sw x5, 0(x4)
+  lw t0, 0(s4)
+  addi s4, s4, 8
+  sw t0, 0(s4)
   NEXT

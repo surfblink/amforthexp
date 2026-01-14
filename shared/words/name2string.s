@@ -1,5 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
-COLON "name>string",NAME2STRING
+COLON "ffa>string",FFA2STRING
     .word XT_CELLPLUS
     .word XT_COUNT
     .word XT_DOLITERAL

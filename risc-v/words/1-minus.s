@@ -1,5 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "1-", 1MINUS # ( u -- u-1 )
+  CODEWORD "1-", 1MINUS # ( u -- u-1 ) MATHS: Subtract one from TOS 
 # -----------------------------------------------------------------------------
-  addi x3, x3, -1
+  addi s3, s3, -1
   NEXT

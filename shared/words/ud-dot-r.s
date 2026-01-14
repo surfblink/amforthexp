@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "ud.r", UDDOTR
 .word  XT_TO_R, XT_L_SHARP, XT_SHARP_S

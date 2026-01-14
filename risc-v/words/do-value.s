@@ -1,6 +1,7 @@
-
-HEADLESS DOVALUE
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DOVALUE
+HIDEWORD "(DOVALUE)" , DOVALUE
   savetos
-  lw x3,0(x17)
-  lw x3,0(x3)
+  lw s3,0(s1)
+  lw s3,0(s3)
 NEXT

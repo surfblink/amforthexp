@@ -1,4 +1,6 @@
-HEADLESS DODATA
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DODATA
+HIDEWORD "(DODATA)" , DODATA
   savetos
-  mv x3,x17
+  mv s3,s1
 NEXT

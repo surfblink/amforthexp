@@ -1,6 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
 CODEWORD "j", J
   savetos
-  lw x3,0(sp) # usual assumptions about J
-  lw x5,4(sp)
-  add x3,x3,x5
+  lw s3,0(s5) # usual assumptions about J
+  lw t0,4(s5)
+  add s3,s3,t0
 NEXT

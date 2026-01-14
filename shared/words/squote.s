@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 IMMED "s\x22", SQUOTE 
     .word XT_DOLITERAL

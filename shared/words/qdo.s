@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 IMMED "?do", QDO
     .word XT_COMPILE
@@ -8,7 +9,7 @@ IMMED "?do", QDO
     .word XT_TO_L
     .word XT_EXIT
 
-NONAME QDOCHECK
+COLON "(qdocheck)", QDOCHECK
     .word XT_2DUP
     .word XT_EQUAL
     .word XT_DUP

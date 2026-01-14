@@ -1,11 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-only
 CODEWORD "nr>", N_R_FROM
-    pop x5
-    mv x6, x5
+    pop t0
+    mv t1, t0
     savetos
 N_R_FROM_LOOP:
-    pop x3
+    pop s3
     savetos
-    addi x5,x5,-1
-    bne x5,zero,N_R_FROM_LOOP
-    mv x3, x6
+    addi t0,t0,-1
+    bne t0,zero,N_R_FROM_LOOP
+    mv s3, t1
 NEXT

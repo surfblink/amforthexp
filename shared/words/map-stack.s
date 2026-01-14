@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "map-stack", MAPSTACK
     .word XT_DUP

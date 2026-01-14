@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "show-wordlist", SHOWWORDLIST
     .word XT_DOLITERAL
@@ -7,8 +8,9 @@ COLON "show-wordlist", SHOWWORDLIST
     .word XT_EXIT
 
 NONAME SHOWWORD
-    .word XT_NAME2STRING
+    .word XT_FFA2STRING
     .word XT_TYPE
     .word XT_SPACE
+#    .word XT_CR
     .word XT_TRUE
     .word XT_EXIT

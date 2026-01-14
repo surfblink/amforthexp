@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 .equ USER_STATE, 0
 .equ USER_FOLLOWER, 1*cellsize
