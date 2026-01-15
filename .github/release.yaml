@@ -1,8 +1,9 @@
 
 name: Release touch1200bps
-on: workflow_dispatch # trigger manually
+on:
+  workflow_dispatch: # trigger manually
 jobs:   
-  test:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,5 +20,3 @@ jobs:
         with:
           artifacts: "dist/*.tgz"
           omitBody: true
-
-
