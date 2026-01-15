@@ -93,7 +93,7 @@ gdb:
 BUILD = cd ./touch1200bps && go build
 dist1200bps:
 	GOOS=darwin GOARCH=arm64 $(BUILD) -o dist/ .
-	tar zcf dist/touch1200bps-osx-arm64.tgz -C dist/ touch1200bps/touch1200bps
+	cd touch1200bps/dist && tar zcf touch1200bps-osx-arm64.tgz touch1200bps
 # 	GOOS=darwin GOARCH=amd64 $(BUILD) -o dist/ .
 # 	tar zcf dist/touch1200bps-osx-amd64.tgz -C dist/ touch1200bps
 # 	GOOS=linux GOARCH=arm64 $(BUILD) -o dist/ .

@@ -6,6 +6,7 @@
 *.hex
 *.list
 build/
+dist/
 **/words/build-info.s
 .DS_Store
 

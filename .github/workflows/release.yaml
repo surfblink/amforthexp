@@ -18,5 +18,5 @@ jobs:
         uses: ncipollo/release-action@v1
         id: create_release
         with:
-          artifacts: "dist/*.tgz"
+          artifacts: "appl/unor4/touch1200bps/dist/*.tgz"
           omitBody: true
