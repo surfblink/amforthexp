@@ -214,11 +214,6 @@ CONSTANT "#usart1" , USART1INTNUM, 53 # USART1: interrupt trap number
 # CODEWORD "dma1-" , DMA1_MINUS # ( -- )
 
 # ----------------------------------------------------------------------
-COLON "serial-emit-pause" , SERIAL_EMIT_PAUSE # ( c -- ) SERIAL: emit c on serial connection or pause if unable  
-    .word XT_PAUSE,XT_SERIAL_EMITQ, XT_DOCONDBRANCH, PFA_SERIAL_EMIT_PAUSE
-    .word XT_SERIAL_EMIT
-    .word XT_EXIT
-# ----------------------------------------------------------------------
 # : serial
 #     ['] serial-key?       ['] key?  cell+ @ !
 #     ['] serial-key-pause  ['] key   cell+ @ !
@@ -256,7 +251,4 @@ COLON "serial", SERIAL # ( -- ) SERIAL: switch operator prompt to serial connect
 	.word XT_STORE
 	.word XT_EXIT
 # ----------------------------------------------------------------------
-COLON "serial-key-pause" , SERIAL_KEY_PAUSE
-    .word XT_PAUSE,XT_SERIAL_KEYQ, XT_DOCONDBRANCH, PFA_SERIAL_KEY_PAUSE
-    .word XT_SERIAL_KEY
-    .word XT_EXIT
+

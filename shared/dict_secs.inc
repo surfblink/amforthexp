@@ -235,7 +235,6 @@
 .endif
 
 .include "words/empty.s"
-.include "words/blink.s"
 .include "words/barbar.s"
 #.include "words/does.s"
 #.include "words/code.s"

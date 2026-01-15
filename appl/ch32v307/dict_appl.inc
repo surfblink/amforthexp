@@ -17,6 +17,7 @@
 
 # MFD include "words/flash.s" as in dict_prims
 .include "words/led.s"
+.include "words/blink.s"
 
 .include "words/env-board.s"
 #include "words/build-info.s"
