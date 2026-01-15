@@ -1,7 +1,9 @@
 
 name: Release touch1200bps
 on:
-  workflow_dispatch: # trigger manually
+  push:
+    tags:
+      - 'touch1200bps-v*'
 jobs:   
   release:
     runs-on: ubuntu-latest
