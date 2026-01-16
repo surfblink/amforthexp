@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "(create)", DOCREATE
     .word XT_PARSENAME,XT_WLSCOPE

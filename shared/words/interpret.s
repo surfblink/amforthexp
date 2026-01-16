@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "interpret", INTERPRET
     .word XT_PARSENAME 

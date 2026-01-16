@@ -1,23 +1,24 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #------------------------------------------------------------------------------
   CODEWORD "d+",DPLUS # ( 1L 1H 2L 2H )
 #------------------------------------------------------------------------------
 
-  push x10
+  push a0
 
-  lw x5, 8(x4)
-  lw x6, 0(x4)
+  lw t0, 8(s4)
+  lw t1, 0(s4)
 
-  add x10, x5, x6
-  sw x10, 8(x4)
+  add a0, t0, t1
+  sw a0, 8(s4)
 
-  sltu x10, x10, x5
+  sltu a0, a0, t0
 
-  lw x5, 4(x4)
-  add x3, x5, x3
-  add x3, x3, x10
+  lw t0, 4(s4)
+  add s3, t0, s3
+  add s3, s3, a0
 
-  addi x4, x4, 8
+  addi s4, s4, 8
 
-  pop x10
+  pop a0
 
   NEXT

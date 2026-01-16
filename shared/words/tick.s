@@ -1,5 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "'", TICK
+# ( "name" -- xt ) SYSTEM: Leave xt of "name" on stack
     .word XT_PARSENAME
     .word XT_FORTHRECOGNIZER
     .word XT_RECOGNIZE

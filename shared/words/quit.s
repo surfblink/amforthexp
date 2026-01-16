@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 COLON "quit", QUIT
 
     .word XT_LP0,XT_LP,XT_STORE

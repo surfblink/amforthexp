@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 IMMED "[compile]", BRACKETCOMPILE
     .word XT_COMPILE

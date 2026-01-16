@@ -1,13 +1,14 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "2swap", 2SWAP # ( 4 3 2 1 -- 2 1 4 3 )
+  CODEWORD "2swap", 2SWAP # ( 4 3 2 1 -- 2 1 4 3 ) STACK: as per pattern! 
 # -----------------------------------------------------------------------------
-  mv x5, x3
-  lw x3, 4(x4)
-  sw x5, 4(x4)
+  mv t0, s3
+  lw s3, 4(s4)
+  sw t0, 4(s4)
 
-  lw x5, 0(x4)
-  lw x6, 8(x4)
-  sw x5, 8(x4)
-  sw x6, 0(x4)
+  lw t0, 0(s4)
+  lw t1, 8(s4)
+  sw t0, 8(s4)
+  sw t1, 0(s4)
   NEXT
 

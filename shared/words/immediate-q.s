@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 NONAME IMMEDIATEQ
     .word XT_FETCH

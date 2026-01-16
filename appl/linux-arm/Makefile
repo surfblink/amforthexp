@@ -27,7 +27,7 @@ build/%.o: %.asm buildinfo
 	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../../arm -I ../../arm/devices/linux -I ../../shared -o $@ $<
 
 build/amforth: build/amforth.o
-	$(CROSS)ld -T memmap -z max-page-size=4096 $< -o $@ 
+	$(CROSS)ld -L ../../shared -T linux.ld -z max-page-size=4096 $< -o $@ 
 
 clean:
 	rm -f amforth build/* words/build-info.s

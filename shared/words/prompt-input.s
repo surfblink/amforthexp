@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DEFER ".input", PROMPTINPUT, XT_PROMPTINPUT_DEFAULT
 

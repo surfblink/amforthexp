@@ -1,4 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
 CODEWORD "r>", R_FROM
   savetos
-  pop x3
+  pop s3
   NEXT

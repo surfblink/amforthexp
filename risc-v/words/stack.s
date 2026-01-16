@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 
 # -----------------------------------------------------------------------------
@@ -5,25 +6,25 @@
                                   # ( -- Number of elements that have been on datastack before )
 # -----------------------------------------------------------------------------
   # Berechne den Stackfüllstand
-  li x5, RAM_upper_datastack # Anfang laden  Calculate stack fill gauge
-  sub x5, x5, x4            # und aktuellen Stackpointer abziehen
+  la t0, RAM_upper_datastack # Anfang laden  Calculate stack fill gauge
+  sub t0, t0, s4            # und aktuellen Stackpointer abziehen
   savetos
-  srai x3, x5, 2 # Durch 4 teilen  Divide through 4 Bytes/element.
+  srai s3, t0, 2 # Durch 4 teilen  Divide through 4 Bytes/element.
   NEXT
 
 # -----------------------------------------------------------------------------
   CODEWORD  "rdepth", RDEPTH
 # -----------------------------------------------------------------------------
   # Berechne den Stackfüllstand
-  li x5, RAM_upper_returnstack # Anfang laden  Calculate stack fill gauge
-  sub x5, x5, sp          # und aktuellen Stackpointer abziehen
+  la t0, RAM_upper_returnstack # Anfang laden  Calculate stack fill gauge
+  sub t0, t0, s5          # und aktuellen Stackpointer abziehen
   savetos
-  srai x3, x5, 2 # Durch 4 teilen  Divide through 4 Bytes/element.
+  srai s3, t0, 2 # Durch 4 teilen  Divide through 4 Bytes/element.
   NEXT
 
 
 #------------------------------------------------------------------------------
   CODEWORD  "rdrop", RDROP # Entfernt das oberste Element des Returnstacks
 #------------------------------------------------------------------------------
-  addi sp, sp, 4
+  addi s5, s5, 4
   NEXT

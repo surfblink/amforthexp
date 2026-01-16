@@ -1,11 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-only
 CODEWORD "n>r", N_TO_R
-    mv x5, x3
-    mv x6, x3
+    mv t0, s3
+    mv t1, s3
 N_TO_R_LOOP:
     loadtos
-    push x3
-    addi x5,x5,-1
-    bne x5,zero,N_TO_R_LOOP
-    push x6
+    push s3
+    addi t0,t0,-1
+    bne t0,zero,N_TO_R_LOOP
+    push t1
     loadtos
 NEXT

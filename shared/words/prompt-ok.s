@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DEFER ".ok", PROMPTOK, XT_PROMPTOKDEFAULT
 

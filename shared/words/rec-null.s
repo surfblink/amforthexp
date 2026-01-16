@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DATA "rectype-null", RECTYPE_NULL
     .word XT_FAIL  

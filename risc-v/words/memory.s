@@ -1,115 +1,137 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # Memory access
 
+# This seems to have some problems Mon 15 Dec 25 12:07:29
+# and only appears to work for backward copy....
+# replacing by move.s 
+# # -----------------------------------------------------------------------------
+#   CODEWORD  "move",MOVE  # Move some bytes around. This can cope with overlapping memory areas.
+# # -----------------------------------------------------------------------------
+#   addi s5, s5, -12
+#   sw ra,  8(s5)
+#   sw a0, 4(s5)
+#   sw a1, 0(s5)   
+
+#   popdadouble a0, a1
+
+#   # Count > 0 ?
+#   beq a0, zero, 3f # Nothing to do if count is zero.
+
+#   # Compare source and destination address to find out which direction to copy.
+#   beq a1, s3, 3f # If source and destionation are the same, nothing to do.
+#   bltu a3, s3, 2f
+  
+#   addi s3, s3, -1
+#   addi s5, a1, -1
+
+# 1:# Source > Destination --> Backward move
+#   add t0, s3, a0
+#   lbu t0, 0(t0)
+  
+#   add t1, a1, a0
+#   sb t0, 0(t1)
+  
+#   addi a0, a0, -1
+#   bne a0, zero, 1b
+#   j 3f
+
+# 2:# Source < Destination --> Forward move
+#   lbu t0, 0(s3)
+#   sb t0, 0(a1)
+  
+#   addi s3, s3, 1
+#   addi a1, a1, 1
+#   addi a0, a0, -1
+#   bne a0, zero, 2b
+
+# 3:
+#   lw s3, 0(s4)
+#   addi s4, s4, 4
+
+#   lw ra,  8(s5)
+#   lw a0, 4(s5)
+#   lw a1, 0(s5)
+#   addi s5, s5, 12
+
+#   NEXT
+
+
+
 # -----------------------------------------------------------------------------
-  CODEWORD  "move",MOVE  # Move some bytes around. This can cope with overlapping memory areas.
-# -----------------------------------------------------------------------------
-  addi sp, sp, -12
-  sw x1,  8(sp)
-  sw x10, 4(sp)
-  sw x11, 0(sp)   
-
-  popdadouble x10, x11
-
-  # Count > 0 ?
-  beq x10, zero, 3f # Nothing to do if count is zero.
-
-  # Compare source and destination address to find out which direction to copy.
-  beq x11, x3, 3f # If source and destionation are the same, nothing to do.
-  bltu x13, x3, 2f
-  
-  addi x3, x3, -1
-  addi x2, x11, -1
-
-1:# Source > Destination --> Backward move
-  add x5, x3, x10
-  lbu x5, 0(x5)
-  
-  add x6, x11, x10
-  sb x5, 0(x6)
-  
-  addi x10, x10, -1
-  bne x10, zero, 1b
-  j 3f
-
-2:# Source < Destination --> Forward move
-  lbu x5, 0(x3)
-  sb x5, 0(x11)
-  
-  addi x3, x3, 1
-  addi x11, x11, 1
-  addi x10, x10, -1
-  bne x10, zero, 2b
-
-3:
-  lw x3, 0(x4)
-  addi x4, x4, 4
-
-  lw x1,  8(sp)
-  lw x10, 4(sp)
-  lw x11, 0(sp)
-  addi sp, sp, 12
-
-  NEXT
-
-
-# -----------------------------------------------------------------------------
-  CODEWORD  "fill", FILL  # Fill memory with given byte.
+  CODEWORD  "fill", FILL  # ( a u n -- ) MEM: Fill a...(a+u-1) memory with byte n 
   # ( Destination Count Filling -- )
 # -----------------------------------------------------------------------------
   # 6.1.1540 FILL CORE ( c-addr u char -- ) If u is greater than zero, store char in each of u consecutive characters of memory beginning at c-addr.
 
-  addi sp, sp, -8
-  sw x10,  4(sp)
-  sw x11, 0(sp)
+  addi s5, s5, -8
+  sw a0,  4(s5)
+  sw a1, 0(s5)
 
-  popdadouble x10, x11
-  #popda x10 # Filling byte
-  #popda x11 # Count
+  popdadouble a0, a1
+  #popda a0 # Filling byte
+  #popda a1 # Count
   # TOS       Destination
 
-  beq x11, zero, 2f
+  beq a1, zero, 2f
 
-1:addi x11, x11, -1
-  add x5, x3, x11
-  sb x10, 0(x5)
-  bne x11, zero, 1b
+1:addi a1, a1, -1
+  add t0, s3, a1
+  sb a0, 0(t0)
+  bne a1, zero, 1b
 
 2:
-  lw x3, 0(x4)
-  addi x4, x4, 4
+  lw s3, 0(s4)
+  addi s4, s4, 4
 
-  lw x10,  4(sp)
-  lw x11, 0(sp)
-  addi sp, sp, 8
+  lw a0,  4(s5)
+  lw a1, 0(s5)
+  addi s5, s5, 8
 
   NEXT
 
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "+!", PLUSSTORE # ( x 32-addr -- )
-                               # Adds 'x' to the memory cell at 'addr'.
+  CODEWORD  "+!", PLUSSTORE # ( n a -- ) MEM: Add n to contents of address a [a]=[a]+n 
+
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-    lw x6, 0(x3)
-    add x5, x5, x6
-    sw x5, 0(x3)
-  lw x3, 4(x4)
-  addi x4, x4, 8
+  lw t0, 0(s4)
+    lw t1, 0(s3)
+    add t0, t0, t1
+    sw t0, 0(s3)
+  lw s3, 4(s4)
+  addi s4, s4, 8
   NEXT
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "c@", CFETCH # ( 8-addr -- x )
+  CODEWORD  "c@", CFETCH # ( a -- x ) MEM: put byte at a on data stack 
                               # Loads the byte at 'addr'.
 # -----------------------------------------------------------------------------
-  lbu x3, 0(x3)
+  lbu s3, 0(s3)
   NEXT
 
 # -----------------------------------------------------------------------------
-  CODEWORD  "c!", CSTORE # ( x 8-addr -- )
+  CODEWORD  "c!", CSTORE # ( x a -- ) MEM: store byte x at a 
 # Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  sb x5, 0(x3)
-  lw x3, 4(x4)
-  addi x4, x4, 8
+  lw t0, 0(s4)
+  sb t0, 0(s3)
+  lw s3, 4(s4)
+  addi s4, s4, 8
+  NEXT
+
+# -----------------------------------------------------------------------------
+  CODEWORD  "h@", HFETCH # ( a -- x ) MEM: put half-word at a on data stack 
+                              # Loads the byte at 'addr'.
+# -----------------------------------------------------------------------------
+  lhu s3, 0(s3)
+  NEXT
+
+# -----------------------------------------------------------------------------
+  CODEWORD  "h!", HSTORE # ( x a -- ) MEM: store half-word x at a 
+# Given a value 'x' and an 8-bit-aligned address 'addr', stores 'x' to memory at 'addr', consuming both.
+# -----------------------------------------------------------------------------
+  lw t0, 0(s4)
+  sh t0, 0(s3)
+  lw s3, 4(s4)
+  addi s4, s4, 8
   NEXT

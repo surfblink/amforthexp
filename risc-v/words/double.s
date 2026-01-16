@@ -1,9 +1,10 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 #------------------------------------------------------------------------------
   CODEWORD  "s>d", S2D # ( n - dl dh ) Single --> Double conversion
 #------------------------------------------------------------------------------
   savetos
-  srai x3, x3, 31    # Turn MSB into 0xffffffff or 0x00000000
+  srai s3, s3, 31    # Turn MSB into 0xffffffff or 0x00000000
   NEXT
 
 #------------------------------------------------------------------------------
@@ -11,8 +12,52 @@
 um_slash_mod: # ( ud u -- u u ) Dividend Divisor -- Rest Ergebnis
              # 64/32 = 32 Rest 32
 #------------------------------------------------------------------------------
-  .word XT_ZERO, XT_UDSLASHMOD,XT_NIP,XT_NIP,XT_EXIT
+#  .word XT_ZERO, XT_UDSLASHMOD,XT_NIP,XT_NIP,XT_EXIT
+   .word XT_ZERO, XT_UDSLASHMOD,XT_DROP,XT_NIP,XT_EXIT
 
+
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# Obviously, this is C code and not assembly code. It will not work here, but
+# it is the best place to keep it incase (a) it is needed again (b) I need to
+# use another C function and want to recall the order of the arguments and how
+# to "return" values into the memory space occupied by the datastack s4. 
+
+.ifnb
+//                         TOS          NOS          3            4 
+int c_udslashmod(uint32_t *mem, uint32_t a , uint32_t b , uint32_t c , uint32_t d )
+// STACK PATTERN FROM RIGHT TO LEFT 
+//          -- u1h u1l u2h u2l   
+//          -- a   b   c   d  
+{
+  uint64_t numerator   = c * 0x100000000 + d ;
+  uint64_t denominator = a * 0x100000000 + b ;
+  
+  uint64_t q = numerator / denominator ;
+  uint64_t r = numerator % denominator ;  
+  
+
+  *(mem+2) = (r & 0xFFFFFFFF) ;
+  *(mem+1) = (r >> 32 ) & 0xFFFFFFFF ;
+  *(mem+0) = (q & 0xFFFFFFFF) ;
+  
+  return (q >> 32) & 0xFFFFFFFF ; 
+}
+
+CODEWORD "ud/mod" , UDSLASHMOD # ( a b c -- c)
+    addi a0 , s4 , 0  # by chance, a balanced operation
+    mv a1 , s3        # TOS 
+    lw a2 , 0(s4)     # NOS
+    lw a3 , 4(s4)     # 3 
+    lw a4 , 8(s4)     # 4 
+    addi s4 , s4 , 0  # by chance, a balanced operation
+    jal c_udslashmod  # *mem TOS NOS 3 4
+    mv s3 , a0        # return TOS is a0 
+    NEXT
+.endif
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
   CODEWORD  "ud/mod", UDSLASHMOD
          # Unsigned divide 64/64 = 64 remainder 64
@@ -20,11 +65,11 @@ um_slash_mod: # ( ud u -- u u ) Dividend Divisor -- Rest Ergebnis
          # ( 1L 1H 2L tos: 2H -- Rem-L Rem-H Quot-L tos: Quot-H )
 #------------------------------------------------------------------------------
 .macro addc dest, sour1, sour2
-  add x7, \sour1, \sour2
-  sltu x8, x7, \sour1
-  add \dest, x7, x5
-  sltu x9, \dest, x7
-  or x5, x8, x9
+  add t2, \sour1, \sour2
+  sltu s7, t2, \sour1
+  add \dest, t2, t0
+  sltu s8, \dest, t2
+  or t0, s7, s8
 .endm
 
 ud_slash_mod:
@@ -35,112 +80,112 @@ ud_slash_mod:
 
 
    # Shift-High Shift-Low Dividend-High Dividend-Low
-   #        x13       x12           x11          x10
+   #        a3       a2           a1          a0
 
-  addi sp, sp, -16
-  sw x10, 12(sp)
-  sw x11, 8(sp)
-  sw x12, 4(sp)   
-  sw x13, 0(sp)
+  addi s5, s5, -16
+  sw a0, 12(s5)
+  sw a1, 8(s5)
+  sw a2, 4(s5)   
+  sw a3, 0(s5)
 
 
-   li x13, 0
-   li x12, 0
-   lw x11, 4(x4)
-   lw x10, 8(x4)
+   li a3, 0
+   li a2, 0
+   lw a1, 4(s4)
+   lw a0, 8(s4)
 
    # Divisor-High Divisor-Low
-   #         x15          x14
+   #         a5          a4
 
 ud_slash_mod_internal:
 
-   push x14
-   push x15
+   push a4
+   push a5
 
-   push x7
-   push x8
-   push x9
+   push t2
+   push s7
+   push s8
   
-   mv x15, x3
-   lw x14, 0(x4)
+   mv a5, s3
+   lw a4, 0(s4)
 
    # For this long division, we need 64 individual division steps.
-   li x3, 64
+   li s3, 64
 
 3: 
 
 
     # Shift the long chain of four registers.
-    li x5, 0
+    li t0, 0
 
-    addc x10, x10, x10
-    addc x11, x11, x11
-    addc x12, x12, x12
-    addc x13, x13, x13
+    addc a0, a0, a0
+    addc a1, a1, a1
+    addc a2, a2, a2
+    addc a3, a3, a3
 
     # Compare Divisor with top two registers
-    bltu x15, x13, 1f # Check high part first
-    bltu x13, x15, 2f
+    bltu a5, a3, 1f # Check high part first
+    bltu a3, a5, 2f
     # cmp r3, r5 # Check high part first
     # bhi 1f
     # blo 2f
 
-    bltu x12, x14, 2f # High part is identical. Low part decides.
+    bltu a2, a4, 2f # High part is identical. Low part decides.
     # cmp r2, r4 
     # blo 2f
 
     # Subtract Divisor from two top registers
-1:  li x5, 0
-    subc x12, x12, x14
-    subc x13, x13, x15
+1:  li t0, 0
+    subc a2, a2, a4
+    subc a3, a3, a5
 
     # subs r2, r4 # Subtract low part
     # sbcs r3, r5 # Subtract high part with carry
 
     # Insert a bit into Result which is inside LSB of the long register.
-    addi x10, x10, 1
+    addi a0, a0, 1
 2:
 
 
-   addi x3, x3, -1
-   bne x3, zero, 3b
+   addi s3, s3, -1
+   bne s3, zero, 3b
 
    # Now place all values to their destination.
-   mv x3, x11    # Result-High
-   sw x10, 0(x4) # Result-Low
-   sw x13, 4(x4) # Remainder-High
-   sw x12, 8(x4) # Remainder-Low
+   mv s3, a1    # Result-High
+   sw a0, 0(s4) # Result-Low
+   sw a3, 4(s4) # Remainder-High
+   sw a2, 8(s4) # Remainder-Low
 
-   pop x9
-   pop x8
-   pop x7
+   pop s8
+   pop s7
+   pop t2
 
-   lw x10, 20(sp)
-   lw x11, 16(sp)
-   lw x12, 12(sp)
-   lw x13, 8(sp)
-   lw x14, 4(sp)
-   lw x15, 0(sp)    
-   addi sp, sp, 24
+   lw a0, 20(s5)
+   lw a1, 16(s5)
+   lw a2, 12(s5)
+   lw a3, 8(s5)
+   lw a4, 4(s5)
+   lw a5, 0(s5)    
+   addi s5, s5, 24
 
    NEXT
 
 #------------------------------------------------------------------------------
   CODEWORD  "d0<", DZEROLESS # ( 1L 1H -- Flag ) Is double number negative ?
 #------------------------------------------------------------------------------
-  addi x4, x4, 4
-  srai x3, x3, 31    # Turn MSB into 0xffffffff or 0x00000000
+  addi s4, s4, 4
+  srai s3, s3, 31    # Turn MSB into 0xffffffff or 0x00000000
   NEXT
 
 #------------------------------------------------------------------------------
   CODEWORD  "d0=", DZEROEQUAL # ( 1L 1H -- Flag )
 #------------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  or x3, x3, x5
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  or s3, s3, t0
 
-  sltiu x3, x3, 1
-  addi x3, x3, -1
-  xori x3, x3, -1
+  sltiu s3, s3, 1
+  addi s3, s3, -1
+  xori s3, s3, -1
 
   NEXT

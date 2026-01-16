@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 IMMED "recurse", RECURSE
     .word XT_LATEST

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "rec-find", REC_FIND
     .word XT_FINDXT

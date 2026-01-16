@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "Udefer@", UDEFER_FETCH
   .word XT_UP_FETCH, XT_PLUS, XT_FETCH

@@ -1,32 +1,20 @@
 
+.globl PFA_COLD 
+
+.include "config.inc"
+.include "macros.inc"
+.include "user.inc"
+
+.equ WANT_IGNORECASE, 0
 
 .syntax unified
 .cpu cortex-m4
 .thumb
 
-.text
-
-.equ RamStart, 0x20000000
-.equ RamEnd,   0x20008000
-
-# Flash starts at 0 but first 32K are occupied by the Uno R4 bootloader
-.equ FlashStart,  0x00004000
-.equ FlashEnd,    0x00040000
-
-.equ datastack_size, 128   
-.equ returnstack_size, 128 
-.equ refill_buf_size, 96
-.equ appl_userarea_size, 8 
-.equ leavestack_size, 8*cellsize
-
-.equ WANT_IGNORECASE, 0
-
-# Inlining arm/amforth.s here to be able to extend vectors/isr
-.include "macros.s"
-.include "preamble.inc"
-.include "user.inc"
-
+.section .vector, "ax"
 .include "vectors.s"
+
+.section amforth, "ax"
 .include "isr.s"
 
 STARTDICT
@@ -34,7 +22,6 @@ STARTDICT
 .include "dict_prims.inc"
 .include "dict_secs.inc"
 .include "dict_env.inc"
-
 .include "dict_appl.inc"
 
 ENDDICT

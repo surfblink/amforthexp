@@ -3,10 +3,7 @@
 .global PFA_COLD
   j PFA_COLD
 
-
-.include "macros.s"
-
-.include "preamble.inc"
+.include "macros.inc"
 .include "user.inc"
 
 STARTDICT

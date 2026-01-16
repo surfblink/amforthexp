@@ -11,24 +11,28 @@ ifeq ("$(BOARD)", "armv7l")
 endif
 LANG=C
 
+include ../../arm/dev/utils.make
+
 all: build/amforth.hex build/amforth.lst
 
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
-build/%.o: %.asm buildinfo
+build/%.o: %.s buildinfo
 	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../../arm -I ../../arm/devices/lm4f120xl -I ../../shared -o $@ $<
 
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -T memmap $< -o $@ 
+	$(CROSS)ld -L ../../shared -T launchpad.ld $< -o $@ 
 	$(CROSS)objcopy build/amforth.elf build/amforth.bin -O binary
 
 build/%.hex: build/%.elf
 	$(CROSS)objcopy -O ihex $< $@
 
 build/%.lst: build/%.elf
-	$(CROSS)objdump -DSt $< >$@
+	$(CROSS)objdump --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
+
+
 
 clean:
 	rm -f build/* words/build-info.s
@@ -49,7 +53,7 @@ run:
 # Use this when you want more powerful terminal emulator than the very basic stdio.
 # The pty device is printed after start, connect to it with a terminal emulator,
 # e.g.: tio --map=ODELBS /dev/ttys019	// ODELBS fixes backspace behavior
-prun:
+runpty:
 	$(QEMU) -serial pty
 #	Following was an attempt to predefine the device filename
 #	Unsuccessful so far: Failed to create PTY symlink: Operation not permitted
@@ -63,5 +67,4 @@ debug:
 gdb:
 	$(CROSS)gdb-py build/amforth.elf --quiet \
 		-ex 'target remote :1234' \
- 		-ex "directory ../../arm/dev" \
- 		-ex "source .gdbinit"
+ 		-ex "directory ../../arm/dev"

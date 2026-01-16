@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "d.r", DDOTR
 .word XT_TO_R, XT_TUCK, XT_DABS, XT_L_SHARP

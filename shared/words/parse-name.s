@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "parse-name", PARSENAME
     .word XT_BL

@@ -1,5 +1,7 @@
-HEADLESS DOUSER
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DOUSER
+HIDEWORD "(DOUSER)" , DOUSER
   savetos
-  lw x3,0(x17)
-  add x3,x3,x18
+  lw s3,0(s1)
+  add s3,s3,s6
 NEXT

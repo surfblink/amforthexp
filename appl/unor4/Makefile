@@ -4,6 +4,8 @@ CROSS=arm-none-eabi-
 LANG=C
 BOARD = UNOR4
 
+include ../../arm/dev/utils.make
+
 # This port was developed on a MacBook with some tools borrowed from Arduino IDE.
 # You will likely need to adjust PORT, BOSSAC and OPENOCD to suite your configuration.
 ARDUINO_TOOLS = /Users/martin/Library/Arduino15/packages/arduino/tools
@@ -27,7 +29,7 @@ build/%.o: %.s words/*.s buildinfo
 	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../../arm -I ../../arm/devices/cortex-m4 -I ../../shared -o $@ $<
 
 build/amforth.elf: build/amforth.o
-	$(CROSS)ld -T memmap.ld $< -o $@
+	$(CROSS)ld -L ../../shared -T ra4m1.ld $< -o $@
 
 build/%.lst: build/%.elf
 	$(CROSS)objdump -DSt -j amforth $< >$@
@@ -85,7 +87,7 @@ gdb:
 	$(CROSS)gdb-py -tui build/amforth.elf --quiet \
 	-ex "target extended-remote localhost:50000" \
 	-ex "directory ../../arm/dev" \
-	-ex "source .gdbinit"
+	-ex "source tui-full.gdb"
 
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/

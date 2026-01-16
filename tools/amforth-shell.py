@@ -268,6 +268,7 @@ from io import StringIO
 import subprocess
 import sys
 import traceback
+import platform
 
 class AMForthException(Exception):
     pass
@@ -1228,7 +1229,10 @@ additional definitions (e.g. register names)
         if not self._readline_initialized:
             readline.set_completer_delims(" ")
             readline.set_completer(self._rlcompleter)
-            readline.parse_and_bind("tab: complete")
+            if platform.system() == 'Darwin':
+                readline.parse_and_bind('bind ^I rl_complete')
+            else:
+                readline.parse_and_bind("tab: complete")
             histfn = os.path.join(os.path.expanduser("~"),
                                   ".frt-interact.history")
             try:
@@ -1242,18 +1246,21 @@ additional definitions (e.g. register names)
             atexit.register(readline.write_history_file, histfn)
 
     def _update_words(self):
-        # get all words that are available in the search order      
+        # get all words that are available in the search order
+        self.progress_callback("Information", None, "getting words")
         self.send_line("base @ decimal dp u. base !")
         dp = self.read_response()
         if dp[-3:] != " ok":
-            return  # Something went wrong, just silently ignore
+            self.progress_callback("Error",None,"setting base")
+            return 
         dp = int(dp[:-3])
         if self._amforth_dp != dp:
             self._amforth_dp = dp
             self.send_line("words")
             words = self.read_response()
             if words[-3:] != " ok":
-                return # Something went wrong, just silently ignore
+                self.progress_callback("Error",None,"setting base")
+                return 
             self._amforth_words = words.split(" ") + self.interact_directives
 
     def _update_stack(self):
@@ -1261,7 +1268,8 @@ additional definitions (e.g. register names)
         self.send_line(".s")
         words=self.read_response()
         if words[-3:] != " ok":
-            return # Something went wrong, just silently ignore
+            self.progress_callback("Error",None,"getting stack")
+            return
         self._amforth_stack=words[:-3]
             
     def _update_cpu(self):
@@ -1269,7 +1277,8 @@ additional definitions (e.g. register names)
         self.send_line("s\" cpu\" environment search-wordlist drop execute itype")
         words = self.read_response()
         if words[-3:] != " ok":
-            return # Something went wrong, just silently ignore
+            self.progress_callback("Error",None,"update CPU")
+            return 
         mcudef = words[:-3].lower()
         self._amforth_regs = {}
         if mcudef.startswith("msp"):
@@ -1347,10 +1356,12 @@ additional definitions (e.g. register names)
                                         "#timeout", "#timeout-next"]:
                     self._rl_matches = []
                 else:
-                    self._rl_matches = [w + " "  for w in self._amforth_words+self._amforth_regs.keys()
+                    self._rl_matches = [w + " "  for w in self._amforth_words+
+                                        list(self._amforth_regs.keys())
                                         if not text or w.startswith(text)]
             else:
-                self._rl_matches = [w + " " for w in self._amforth_words+self._amforth_regs.keys()
+                self._rl_matches = [w + " " for w in self._amforth_words+
+                                    list(self._amforth_regs.keys())
                                     if not text or w.startswith(text)]
             if self._rl_matches:
                 return self._rl_matches[0]

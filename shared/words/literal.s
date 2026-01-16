@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 IMMED "literal", LITERAL
         .word XT_COMPILE

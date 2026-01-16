@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # RAM dump is byte oriented:
 # 00B0 BD 3E 55 33 5B E6 C4 9B 4A 63 72 20 63 72 20 24   .>U3[...Jcr.cr.$
 # 00C0 62 30 20 32 30 20 64 75 6D 70 20 63 72 20 63 72   b0.20.dump.cr.cr
@@ -22,25 +23,92 @@ PFA_QASCII2:
     .word XT_EXIT
 
 
-COLON ".2hex", DOT2HEX
-    .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
-    .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP_G,XT_TYPE
-    .word XT_R_FROM,XT_BASE,XT_STORE
-    .word XT_EXIT
+# MFD COLON ".2hex", DOT2HEX 
+#     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
+#     .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP_G,XT_TYPE
+#     .word XT_R_FROM,XT_BASE,XT_STORE
+#     .word XT_EXIT
 
-#: .2hex base @ >r hex s>d <# # # #> type r> base ! ;
-#: .4hex base @ >r hex s>d <# # # # # #> type r> base ! ;
+# #: .2hex base @ >r hex s>d <# # # #> type r> base ! ;
+# #: .4hex base @ >r hex s>d <# # # # # #> type r> base ! ;
 
-COLON ".4hex", DOT4HEX
+# MFD COLON ".4hex", DOT4HEX
+#     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
+#     .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
+#     .word XT_SHARP_G,XT_TYPE
+#     .word XT_R_FROM,XT_BASE,XT_STORE
+#     .word XT_EXIT
+
+COLON ".8hex", DOT8HEX
+# ( u -- ) OUTPUT: Display u as 8 digit hex
     .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
     .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
     .word XT_SHARP_G,XT_TYPE
     .word XT_R_FROM,XT_BASE,XT_STORE
     .word XT_EXIT
 
-COLON ".8hex", DOT8HEX
-    .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX
-    .word XT_S2D,XT_L_SHARP,XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
+     
+COLON "x." XDOT
+# ( n -- ) OUTPUT: Display u without trailing space 
+    .word XT_S2D,XT_SWAP,XT_OVER,XT_DABS
+    .word XT_L_SHARP,XT_SHARP_S
+    .word XT_ROT,XT_SIGN
+    .word XT_SHARP_G,XT_TYPE
+    .word XT_EXIT
+
+COLON "2x." 2XDOT
+# ( u -- ) OUTPUT: Display u as 2 digit hex
+    .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
+    .word XT_DOLITERAL, 0 
+    .word XT_L_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP_G,XT_TYPE
+    .word XT_R_FROM,XT_BASE,XT_STORE
+    .word XT_EXIT
+
+COLON "8x." 8XDOT
+# ( u -- ) OUTPUT: Display u as 8 digit hex no space
+    .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
+    .word XT_DOLITERAL, 0 
+    .word XT_L_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP_G,XT_TYPE
+    .word XT_R_FROM,XT_BASE,XT_STORE
+    .word XT_EXIT
+
+COLON "hex." HEXDOT
+# ( n -- ) OUTPUT: output n as unsigned 32 bit hex 
+    .word XT_BASE,XT_FETCH,XT_TO_R,XT_HEX  
+    .word XT_DOLITERAL, 0 
+    .word XT_L_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP,XT_SHARP
+    .word XT_SHARP_G,XT_TYPE,XT_SPACE 
+    .word XT_R_FROM,XT_BASE,XT_STORE
+    .word XT_EXIT
+            
+COLON "r.", RDOT
+# ( n -- ) OUTPUT: output n as 32 bit binary with crib 
+    STRING "..28 ..24 ..20 ..16 ..12 ..08 ..04 ..00"
+    .word XT_TYPE,XT_CR
+    .word XT_RDOTDOT
+    .word XT_EXIT
+
+COLON "r..", RDOTDOT
+# ( n -- ) OUTPUT: output n as 32 bit binary 
+    .word XT_BASE,XT_FETCH,XT_TO_R,XT_DOLITERAL,2,XT_BASE,XT_STORE 
+    .word XT_DOLITERAL, 0 
+    .word XT_L_SHARP
+    .word XT_DOLITERAL,0x07,XT_ZERO,XT_DODO
+RDOTDOT_0001:    
+    .word XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP,XT_DOLITERAL,0x20,XT_HOLD 
+    .word XT_DOLOOP, RDOTDOT_0001
     .word XT_SHARP,XT_SHARP,XT_SHARP,XT_SHARP
     .word XT_SHARP_G,XT_TYPE
     .word XT_R_FROM,XT_BASE,XT_STORE
@@ -56,22 +124,50 @@ COLON ".8hex", DOT8HEX
 #     $10 + cr 
 #  $10 +loop drop ;
 
-COLON "dump", DUMP
-    .word XT_SWAP,XT_DOLITERAL, 0xfffffff0, XT_AND,XT_SWAP
-    .word XT_CR,XT_ZERO,XT_DODO
-PFA_DUMP0:
-      .word XT_DUP,XT_DOT8HEX,XT_SPACE
-      .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
-  PFA_DUMP1:
-        .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_DOT2HEX,XT_SPACE,XT_DOLOOP,PFA_DUMP1
-  PFA_DUMP2:
-      .word XT_SPACE,XT_SPACE
-      .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
-  PFA_DUMP3:
-        .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_QASCII, XT_EMIT,XT_DOLOOP,PFA_DUMP3
-  PFA_DUMP4:
+COLON "dump" , DUMP
+# ( a u -- ) SYSTEM: Dump u lines of 16 bytes including [a]
+#    .word XT_SWAP,XT_DOLITERAL, 0xf, XT_INVERT,XT_AND,XT_SWAP
+    .word XT_SWAP,XT_DOLITERAL, 0x3, XT_INVERT,XT_AND,XT_SWAP
+    .word XT_CR,XT_ZERO
+    STRING "-------- 00--------- 04--------- 08--------- 0C---------"
+    .word XT_TYPE, XT_CR
+    .word XT_DODO
 
-      .word XT_DOLITERAL,0x10,XT_PLUS,XT_CR
-PFA_DUMP5:
-    .word XT_DOLITERAL,0x10,XT_DOPLUSLOOP,PFA_DUMP0
-.word XT_DROP,XT_EXIT
+PFA_DUMP0:
+    .word XT_DUP,XT_8XDOT,XT_SPACE
+
+    .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
+PFA_DUMP1:
+    .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_2XDOT,XT_SPACE,XT_DOLOOP,PFA_DUMP1
+
+PFA_DUMP2:
+    .word XT_SPACE, XT_SPACE, XT_SPACE, XT_SPACE
+
+    .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
+PFA_DUMP3:
+    .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_QASCII,XT_EMIT,XT_DOLOOP,PFA_DUMP3
+
+PFA_DUMP4:
+    .word XT_DOLITERAL,0x10,XT_PLUS,XT_CR,XT_DOLOOP,PFA_DUMP0
+
+    .word XT_DROP,XT_EXIT
+
+#COLON "dump", DUMP
+#    .word XT_SWAP,XT_DOLITERAL, 0xfffffff0, XT_AND,XT_SWAP
+#    .word XT_CR,XT_ZERO,XT_DODO
+#PFA_DUMP0:
+#      .word XT_DUP,XT_DOT8HEX,XT_SPACE
+#      .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
+#  PFA_DUMP1:
+#        .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_DOT2HEX,XT_SPACE,XT_DOLOOP,PFA_DUMP1
+#  PFA_DUMP2:
+#      .word XT_SPACE,XT_SPACE
+#      .word XT_DOLITERAL,0x10,XT_ZERO,XT_DODO
+#  PFA_DUMP3:
+#        .word XT_DUP,XT_I,XT_PLUS,XT_CFETCH,XT_QASCII, XT_EMIT,XT_DOLOOP,PFA_DUMP3
+#  PFA_DUMP4:
+
+#      .word XT_DOLITERAL,0x10,XT_PLUS,XT_CR
+#PFA_DUMP5:
+#    .word XT_DOLITERAL,0x10,XT_DOPLUSLOOP,PFA_DUMP0
+#.word XT_DROP,XT_EXIT

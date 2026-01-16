@@ -1,25 +1,27 @@
-
-HEADLESS DOLOOP
-  li x5, 1
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DOLOOP
+HIDEWORD "(DOLOOP)" , DOLOOP
+  li t0, 1
   j PFA_DOPLUSLOOP1
 
-HEADLESS DOPLUSLOOP
-  mv x5, x3
+#HEADLESS DOPLUSLOOP
+HIDEWORD "(DOPLUSLOOP)" , DOPLUSLOOP
+  mv t0, s3
   loadtos
 PFA_DOPLUSLOOP1:
-  add x6,x8,x5
-  slti x11,x5,0
-  slt x12,x6,x8
-  bne x11, x12, PFA_DOLOOP_LEAVE
-  mv x8, x6
-  lw x16,0(x16)
+  add t1,s7,t0
+  slti t2,t0,0
+  slt t3,t1,s7
+  bne t2, t3, PFA_DOLOOP_LEAVE
+  mv s7, t1
+  lw s2,0(s2)
   NEXT
 PFA_DOLOOP_LEAVE:
   # restore loop-sys
-  lw x9, 0(sp)
-  lw x8, 4(sp)
-  addi sp, sp, 8
+  lw s8, 0(s5)
+  lw s7, 4(s5)
+  addi s5, s5, 8
 
   # skip loop address
-  addi x16,x16,4
+  addi s2,s2,4
 NEXT

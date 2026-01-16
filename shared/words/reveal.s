@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 COLON "reveal", REVEAL
     .word XT_NEWEST,XT_CELLPLUS,XT_FETCH

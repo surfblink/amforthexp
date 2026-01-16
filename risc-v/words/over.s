@@ -1,5 +1,6 @@
-CODEWORD "over",OVER # some comment
-  addi x4, x4, -4
-  sw x3, 0(x4)
-  lw x3, 4(x4)
+# SPDX-License-Identifier: GPL-3.0-only
+CODEWORD "over",OVER # ( n2 n1 -- n2 n1 n2 ) STACK: Insert copy of NOS infront of TOS 
+  addi s4, s4, -4
+  sw s3, 0(s4)
+  lw s3, 4(s4)
   NEXT

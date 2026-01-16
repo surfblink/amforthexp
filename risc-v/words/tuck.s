@@ -1,8 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "tuck", TUCK # ( x1 x2 -- x2 x1 x2 )
+  CODEWORD "tuck", TUCK # ( n2 n1 -- n1 n2 n1 ) STACK: Tuck (insert) copy of TOS behind NOS 
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, -4
-  sw x3, 4(x4)
-  sw x5, 0(x4)
+  lw t0, 0(s4)
+  addi s4, s4, -4
+  sw s3, 4(s4)
+  sw t0, 0(s4)
   NEXT

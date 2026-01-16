@@ -1,3 +1,4 @@
-CODEWORD "nip", NIP # some comment
-  addi x4, x4, 4
+# SPDX-License-Identifier: GPL-3.0-only
+CODEWORD "nip", NIP # ( n2 n1 -- n1 ) STACK: Drop NOS 
+  addi s4, s4, 4
   NEXT

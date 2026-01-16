@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 DATA "bases", BASES
     .word 10,16,2,10 

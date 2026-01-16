@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 VALUE "lp0", LP0, RAM_upper_leavestack
 VARIABLE "lp", LP

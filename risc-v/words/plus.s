@@ -1,7 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-only
 # -----------------------------------------------------------------------------
-  CODEWORD "+", PLUS # ( x1 x2 -- x1+x2 )
+  CODEWORD "+", PLUS # ( n2 n1 -- n2+n1 ) MATHS: TOS becomes TOS + NOS 
 # -----------------------------------------------------------------------------
-  lw x5, 0(x4)
-  addi x4, x4, 4
-  add x3, x5, x3
+  lw t0, 0(s4)
+  addi s4, s4, 4
+  add s3, t0, s3
   NEXT

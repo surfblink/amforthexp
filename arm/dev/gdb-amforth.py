@@ -1,4 +1,6 @@
-# https://github.com/mkobetic/amforth/blob/unor4/appl/unor4/gdb-amforth.png
+# Enhanced GDB windows for enhanced GDB forth layout.
+# Loaded by tui-full.gdb
+ 
 import gdb
 
 # TODO: we should be able to read these from the symbol table

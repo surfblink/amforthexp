@@ -1,15 +1,16 @@
+# SPDX-License-Identifier: GPL-3.0-only
 #------------------------------------------------------------------------------
   CODEWORD "dnegate", DNEGATE
 #------------------------------------------------------------------------------
 
-  lw x5, 0(x4) # Low
-  xori x5, x5, -1
-  xori x3, x3, -1
-  sw x5, 0(x4)
+  lw t0, 0(s4) # Low
+  xori t0, t0, -1
+  xori s3, s3, -1
+  sw t0, 0(s4)
 
   savetos
-  li x3, 1
+  li s3, 1
   savetos
-  li x3, 0
+  li s3, 0
 
   j PFA_DPLUS

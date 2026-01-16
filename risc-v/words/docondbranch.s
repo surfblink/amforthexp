@@ -1,7 +1,8 @@
-
-HEADLESS DOCONDBRANCH
-    addi x5,x3,0
+# SPDX-License-Identifier: GPL-3.0-only
+#HEADLESS DOCONDBRANCH
+HIDEWORD "(DOCONDBRANCH)" , DOCONDBRANCH
+    addi t0,s3,0
     loadtos
-    beq zero,x5,PFA_DOBRANCH
-    addi x16,x16,4
+    beq zero,t0,PFA_DOBRANCH
+    addi s2,s2,4
     NEXT

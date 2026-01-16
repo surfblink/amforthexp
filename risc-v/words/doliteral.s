@@ -1,6 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
-HEADLESS DOLITERAL
+# HEADLESS DOLITERAL
+HIDEWORD "(DOLITERAL)" , DOLITERAL            
     savetos
-    lw x3,0(x16)
-    addi x16,x16,4
+    lw s3,0(s2)
+    addi s2,s2,4
     NEXT

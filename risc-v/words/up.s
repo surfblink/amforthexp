@@ -1,11 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-only
 
 CODEWORD "up@", UP_FETCH
     savetos
-    mv x3, x18
+    mv s3, s6
     NEXT
 
 CODEWORD "up!", UP_STORE
-    mv x18,x3
+    mv s6,s3
     loadtos
     NEXT
 
