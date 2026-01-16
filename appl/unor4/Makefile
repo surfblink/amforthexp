@@ -91,3 +91,17 @@ gdb:
 
 # More debugging references
 # https://undo.io/resources/guide-to-symbols-debug-info/
+
+GOBUILD = cd ./touch1200bps && go build -o dist/ .
+TAR = cd touch1200bps/dist && tar zcf
+dist1200bps:
+	export GOOS=darwin GOARCH=arm64; $(GOBUILD)
+	$(TAR) touch1200bps-osx-arm64.tgz touch1200bps
+	export GOOS=darwin GOARCH=amd64; $(GOBUILD)
+	$(TAR) touch1200bps-osx-amd64.tgz touch1200bps
+	export GOOS=linux GOARCH=arm64; $(GOBUILD)
+	$(TAR) touch1200bps-linux-arm64.tgz touch1200bps
+	export GOOS=linux GOARCH=amd64; $(GOBUILD)
+	$(TAR) touch1200bps-linux-amd64.tgz touch1200bps
+	export GOOS=windows GOARCH=amd64; $(GOBUILD)
+	$(TAR) touch1200bps-windows-amd64.tgz touch1200bps.exe
