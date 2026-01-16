@@ -1,5 +1,5 @@
-# This should get autoloaded by GDB when started with `make gdb`
-# Otherwise can also be loaded with `source .gdbinit`
+# AmForth specific gdb commands
+# load with `source amforth.gdb`
 
 # command to dump the return stack
 define .r
@@ -135,7 +135,7 @@ end
 
 # Simple layouts using just the default GDB windows: src, asm, cmd
 # tui new-layout forth regs 15 {-horizontal src 1 asm 1} 20 status 0 cmd 20
-# tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
+tui new-layout forth {-horizontal { {-horizontal src 2 asm 3 } 1 status 0 cmd 1 } 3 regs 1 } 1
 
 # Custom AmForth layout with Forth stacks and customized register windows.
 # This requires Python enabled GDB and the correct version of Python installed on the system.
