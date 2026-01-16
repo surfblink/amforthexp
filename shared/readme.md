@@ -52,3 +52,95 @@ Words that are compiled into the AmForth binary have corresponding symbols defin
 * LFA - VE_ symbol
 * CFA - XT_ symbol
 * PFA - PFA_ sybmol
+
+# AmForth source directory layout
+
+The picture below shows the relevant bit of directory structure with the words/ directories stripped out, annotated to provide some rationale.
+
+```
+% tree --prune -I 'words|build|dev|devices|touch1200bps' appl/ch32v307 appl/launchpad-arm appl/unor4 arm risc-v shared
+
+appl/ch32v307
+├── amforth.S ; main board file
+├── clock.K
+├── config.inc ; board configuration
+├── dict_appl.inc ; board specific words
+├── dict_min.inc
+├── linker.307  ; linker files largely just define MEMORY, and INCLUDE shared/amforth32.ld with the SECTIONS
+├── linker.qem
+├── main.S
+├── Makefile
+├── startup.307
+└── startup.qem
+appl/launchpad-arm
+├── amforth.asm
+├── dict_appl.inc
+├── flash.s
+├── launchpad.ld ; linker file including shared/amforth32.ld
+├── Makefile
+├── readme
+└── vectors.s
+appl/unor4
+├── amforth.s
+├── dict_appl.inc
+├── flash.s
+├── isr.s
+├── Makefile
+├── notes.md
+├── ra4m1.ld ; linker file including shared/amforth32.ld
+├── readme
+└── vectors.s
+arm
+├── amforth.s ; template file to be used for new boards
+├── arch_prims.inc ; architecture specific words
+├── common ; these files are in common directory so that they can be included by the corresponding board files
+│   ├── isr.s
+│   └── vectors.s
+├── interpreter.inc ; inner interpreter code
+└── macros.inc ; architecture specific macros; includes shared/common/macros.inc
+risc-v
+├── amforth.s ; template file to be used for new boards
+├── arch_prims.inc ; architecture specific words
+├── interpreter.inc ; inner interpreter code
+└── macros.inc ; architecture specific macros; includes shared/common/macros.inc
+shared
+├── amforth32.ld ; shared linker file defining the 32-bit memory layout
+├── common ; again common directory so that arch specific macros.inc can import this macros.inc
+│   └── macros.inc
+├── config.inc ; basic configuration parameters referenced by shared/words
+├── dict_env.inc ; shared env dictionary words
+├── dict_prims.inc ; common primitive words used by shared/words (see [1])
+├── dict_secs.inc ; all the secondary shared/words
+├── readme.md
+└── user.inc ; shared user dictionary words
+```
+
+[1] the dict_prims.inc includes interpreter.inc so that the interpreter code still resides in the middle of the prim words (cpu caching reasons);
+     it also includes arch_prims.inc so that arm/risc-v can add more prim words
+
+
+# Linker files
+
+The assembly of AmForth is controlled by linker files. The core linker file `amforth32.ld` defines the memory layout described above. The board/application linker files include this file to ensure the basic structure of the memory layout is the same everywhere. This provides firm foundation for the large number of shared core words.
+
+## Using Linker Symbols
+
+Note that while symbols defined in linker files can be referenced in assembler files, their nature constraints their usage.
+Primarily it means that they cannot be used as immediate values.
+
+This is because the assembler processes source code before the linker, so it can't resolve symbols defined only in the linker script when used as immediates (e.g. refill_buf_size). Immediates must be known at assembly time, while linker symbols are resolved later during linking. Consequently following ARM instruction will fail with "Unknown symbol"
+
+```asm
+    cmp tos, #refill_buf_size
+```
+
+Instead the symbol must be used as an address argument, so the workaround is something like
+
+```asm
+    ldr     r3, =refill_buf_size
+    cmp     tos, r3
+```
+
+This works because `ldr r3, =refill_buf_size` creates a load instruction with a placeholder that the linker fills in with the actual value from the script.
+
+Consequently constants that are not related to the memory layout are better defined in assembler files to avoid this constraint.
