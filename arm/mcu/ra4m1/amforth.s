@@ -1,5 +1,5 @@
 
-.global PFA_COLD 
+.globl PFA_COLD 
 
 .include "config.inc"
 .include "macros.inc"
@@ -12,16 +12,16 @@
 .thumb
 
 .section .vector, "ax"
-.include "common/vectors.s"
+.include "vectors.s"
 
 .section amforth, "ax"
-.include "common/isr.s"
+.include "isr.s"
 
 STARTDICT
 
 .include "dict_prims.inc"
 .include "dict_secs.inc"
 .include "dict_env.inc"
-.include "dict_appl.inc"
+.include "dict_mcu.inc"
 
 ENDDICT

@@ -1,5 +1,6 @@
 
 mcu is a LM4F120H5QR 32-bit ARM Cortex M4F
+(renamed to Tiva TM4C1233H6PM)
 256 kB flash memory
 32 kB SRAM: $20000000 .. $20008000
 80 MHz

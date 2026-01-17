@@ -27,7 +27,7 @@ GDB_PORT ?= 3333
 # location of includes 
 ######################
 
-INCLUDES = ../../devices/$(BOARD)
+INCLUDES =
 
 #############################################################
 # This Section is for uploading a program to SPI Flash

@@ -1,14 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-only
-.global XT_WAZ
 
-
-#
 # all primitves / code words
 # they are placed close together to
 # maximize cache usage
 #
-
-    
 
 .include "words/drop.s"
 .include "words/over.s"

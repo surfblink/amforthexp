@@ -1,13 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-only
-.global DO_EXECUTE , XT_WAZ
-
+.global DO_EXECUTE
 
 #
 # all primitves / code words
 # they are placed close together to
 # maximize cache usage
 #
-
 
 .include "mcu-words/flash.s"
 .include "pri-words/exit.s"

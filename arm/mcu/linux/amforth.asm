@@ -32,7 +32,7 @@ STARTDICT
 .include "dict_secs.inc"
 .include "dict_env.inc"
 
-.include "dict_appl.inc"
+.include "dict_mcu.inc"
 
 ENDDICT
 

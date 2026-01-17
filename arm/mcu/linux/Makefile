@@ -24,7 +24,7 @@ buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
 build/%.o: %.asm buildinfo
-	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../devices/linux -I ../../../core -o $@ $<
+	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../../core -o $@ $<
 
 build/amforth: build/amforth.o
 	$(CROSS)ld -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
@@ -72,7 +72,7 @@ run: build/amforth
 # 		|| true
 # 	$(QEMU) -cpu arm1176 -m 256 -M versatilepb
 # 		-kernel qemu/kernel-qemu-5.10.63-bullseye \
-# 		-dtb appl/linux-arm/qemu/versatile-pb-bullseye-5.10.63.dtb \
+# 		-dtb mcu/linux-arm/qemu/versatile-pb-bullseye-5.10.63.dtb \
 #     	-drive "file=$(IMAGE),if=none,index=0,media=disk,format=raw,id=disk0" \
 #     	-device 'virtio-blk-pci,drive=disk0,disable-modern=on,disable-legacy=off' \
 # 	    -net 'user,hostfwd=tcp::5022-:22' -net nic \

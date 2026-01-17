@@ -46,7 +46,7 @@ STARTDICT
 
 .include "dict_prims.inc" 
 .include "dict_secs.inc"
-#include "dict_appl.inc"    # include with cpp
+#include "dict_mcu.inc"    # include with cpp
 .include "dict_env.inc"
 
 ENDDICT

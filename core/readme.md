@@ -2,10 +2,10 @@
 
 This is the shared basis of all 32-bit versions of AmForth.
 
-Words in core/words are combined with architecture specific words (rv/words, arm/words, ...)
-and with architecture compatible application/board specific words, e.g.
-* core/words/ + rv/words + rv/app/hifive1/words (HiFive board), or
-* core/words/ + arm/words + arm/app/launchpad/words (Launchpad Stellaris board)
+Words in core/words are combined with ARM/RISC-V architecture specific words (rv/words, arm/words, ...)
+and with architecture compatible MCU specific words, e.g.
+* core/words/ + rv/words + rv/mcu/hifive1/words (HiFive board), or
+* core/words/ + arm/words + arm/mcu/lm4f120/words (Stellaris Launchpad board)
 
 # Architecture
 
@@ -23,13 +23,13 @@ RAMLO is used to support runtime needs of AmForth, it houses things like the par
 
 RAMHI is again divided into 2 sections.
 
-RAMHI lower part is used for variable values and other application uses. The end of the used part of this section is tracked with `vp` pointer.
+RAMHI lower part is used for variable values and other mculication uses. The end of the used part of this section is tracked with `vp` pointer.
 
 RAMHI higher part stores definitions of user defined words. The end of the used part of this section is tracked with `dp.ram` pointer.
 
 ### Data Flash Memory / EEPROM
 
-This is a persistent, non-executable memory. It used to persist AmForth values and other application uses. Design yet to be finalized.
+This is a persistent, non-executable memory. It used to persist AmForth values and other mculication uses. Design yet to be finalized.
 
 
 ## Dictionary word layout
@@ -64,9 +64,7 @@ To be continued
 The picture below shows the relevant bit of directory structure with the words/ directories stripped out.
 
 ```
-% tree --prune -I 'words|build|dev|devices|touch1200bps' core arm rv
-
-core                = core AmForth files; shared by all architectures and apps
+core                = core AmForth files; shared by all architectures and mcus
 ├── amforth32.ld    = shared linker file; defines the 32-bit memory layout (SECTIONS)
 ├── common
 │   └── macros.inc  = shared macros (e.g. dictionary); included by arch macros.inc
@@ -79,23 +77,23 @@ core                = core AmForth files; shared by all architectures and apps
 
 arm                 = ARM Cortex-M based MCUs
 ├── amforth.s       = template main source file to be used to start new boards
-├── app
-│   ├── launchpad           = Launchpad Stellaris board 
-│   │   ├── amforth.s       = main app source file
-│   │   ├── dict_appl.inc   = app specific words
-│   │   ├── launchpad.ld    = app linker file defines MEMORY, and INCLUDEs core/amforth32.ld
+├── mcu
+│   ├── lm4f120            = TI's LM4F Series MCU & Stellaris® LM4F120 LaunchPad
+│   │   ├── amforth.s      = main mcu source file
+│   │   ├── dict_mcu.inc   = mcu specific words
+│   │   ├── stellaris.ld   = mcu linker file defines MEMORY, and INCLUDEs core/amforth32.ld
 │   │   ├── Makefile
 │   │   └── readme
-│   ├── linux               = generic linux/raspberry Pi
-│   └── unor4               = Arduino Uno R4 board
+│   ├── linux              = generic linux/raspberry Pi
+│   └── ra4m1              = Renesas RA4M1 & Arduino Uno R4 board
 ├── arch_prims.inc  = includes ARM specific words
-├── common          = common source files to be included by apps
+├── common          = common source files to be included by mcus
 ├── interpreter.inc = inner interpreter for ARM
 └── macros.inc      = ARM specific macros; includes core/common/macros.inc
 
 rv                  = RISC-V based MCUs
 ├── amforth.s       = template main source file to be used to start new boards
-├── app
+├── mcu
 │   ├── ch32v307    = WCH CH32V307 board
 │   └── hifive1     = HiFive board
 ├── arch_prims.inc  = includes RISC-V specific words
@@ -105,6 +103,7 @@ rv                  = RISC-V based MCUs
 
 [1] dict_prims.inc includes interpreter.inc so that the interpreter code resides in the middle of the prim words (cpu caching reasons);
     it also includes arch_prims.inc so that arm/rv can add more generic architecture prim words
+[2] produced with % tree --prune -I 'words|build|dev|touch1200bps' core arm rv
 
 ## Directory conventions
 
@@ -121,13 +120,13 @@ amforth.s      = the main AmForth source file (usually one for each MCU)
 *.inc          = include files; shouldn't contain code, just directives and constant definitions
 dict_*.inc     = shared lists of AmForth words, defines how the dictionary is laid out in flash
 arch_*.inc     = additional words specific to architecture, follows the prims words in flash
-app/*.inc      = config files for specific boards/targets
+mcu/*.inc      = config files for specific boards/targets
 amforth32.ld   = the main linker file; defines the basic AmForth 32-bit memory layout
 *.ld           = MCU/board specific linker file; configures amforth32.ld options and specifies MEMORY parameters
 
 # Linker files
 
-The assembly of AmForth is controlled by linker files. The core linker file `amforth32.ld` defines the memory layout described above. The board/application linker files include this file to ensure the basic structure of the memory layout is the same everywhere. This provides firm foundation for the large number of shared core words.
+The assembly of AmForth is controlled by linker files. The core linker file `amforth32.ld` defines the memory layout described above. The MCU linker files include this file to ensure the basic structure of the memory layout is the same everywhere. This provides firm foundation for the large number of shared core words.
 
 ## Using Linker Symbols
 
