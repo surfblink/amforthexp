@@ -1,39 +1,13 @@
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+include $(AMFORTH)/arm/dev/Makefile
+MCU_LD ?= stellaris.ld
 
-REVISION := $(shell git status -bs -u no|tr / -)
-ifeq ("$(REVISION)", "")
-    REVISION := $(shell svnversion -n)
-endif
 
-CROSS=arm-none-eabi-
 BOARD=$(shell uname -m)
 ifeq ("$(BOARD)", "armv7l")
    CROSS=
 endif
 LANG=C
-
-all: build/amforth.hex build/amforth.lst
-
-buildinfo: words/build-info.tmpl
-	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
-
-build/%.o: %.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -alms=build/amforth.lst-as -I../.. -I ../../../core -o $@ $<
-
-
-build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../../core -T stellaris.ld $< -o $@ 
-	$(CROSS)objcopy build/amforth.elf build/amforth.bin -O binary
-
-build/%.hex: build/%.elf
-	$(CROSS)objcopy -O ihex $< $@
-
-build/%.lst: build/%.elf
-	$(CROSS)objdump --show-raw-insn --insn-width=4 --all-headers --disassemble-all --source --syms $< >$@
-
-clean:
-	rm -f build/* words/build-info.s
-
-include ../../dev/utils.make
 
 upload: build/amforth.elf
 	lm4flash build/amforth.bin

@@ -1,4 +1,0 @@
-
-MCUREGS = {
-#    "PRCI_PROCMONCFG":"0x10008F0"
-}

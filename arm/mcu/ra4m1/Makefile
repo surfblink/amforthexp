@@ -1,6 +1,7 @@
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+include $(AMFORTH)/arm/dev/Makefile
+MCU_LD ?= ra4m1.ld
 
-REVISION := $(shell git status -bs -u no|tr / -)
-CROSS=arm-none-eabi-
 LANG=C
 BOARD = UNOR4
 
@@ -16,36 +17,6 @@ PORT=cu.usbmodemB43A45B4700C2
 # BOSSAC = bossac
 BOSSAC=$(ARDUINO_TOOLS)/bossac/1.9.1-arduino5/bossac
 OPENOCD = $(ARDUINO_TOOLS)/openocd/0.11.0-arduino2
-
-
-all: build/amforth.hex build/amforth.lst build/amforth.sym
-
-buildinfo: 
-	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
-
-build/%.o: %.s words/*.s buildinfo
-	$(CROSS)as -g --warn --fatal-warnings -achlms=build/amforth.lst-as -I../.. -I ../../../core -o $@ $<
-
-build/amforth.elf: build/amforth.o
-	$(CROSS)ld -L ../../../core -T ra4m1.ld $< -o $@
-
-build/%.lst: build/%.elf
-	$(CROSS)objdump -DSt -j amforth $< >$@
-
-build/%.sym: build/%.elf
-	$(CROSS)nm -l $< >$@
-
-build/%.hex: build/%.elf
-	$(CROSS)objcopy -O ihex $< $@
-
-build/%.bin: build/%.elf
-	$(CROSS)objcopy -O binary $< $@
-
-
-clean:
-	rm build/* words/build-info.s
-
-include ../../dev/utils.make
 
 # N.B.: The UNO R4 BOSSA_LOADER always stores the file at FLASH_IMAGE_START (+offset),
 # 		so DO NOT use -o to enforce FLASH_IMAGE_START!
