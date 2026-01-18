@@ -8,5 +8,5 @@ COLON "appl-turnkey", APPLTURNKEY
   .word XT_TYPE
 .word XT_EXIT
 
-CONSTANT "cache-start", CACHE_START, CACHESTART
-CONSTANT "cache-end", CACHE_END, CACHEEND
+CONSTANT "cache-start", CACHE_START, dp0.ram
+CONSTANT "cache-end", CACHE_END, dp.ram.max

@@ -256,6 +256,7 @@ SECTIONS
         . = . + __stack_size;
         PROVIDE( _eusrstack = .);
     } >RAM
+	PROVIDE( dp.ram.max = ADDR(.stack) - slack );
 
     eeprom_size = 256 ;
     

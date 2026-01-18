@@ -61,8 +61,8 @@ CODEWORD "cacheflush", CACHEFLUSH @ ( -- )
   dsb
   isb  
   
-  ldr r0, =CACHESTART  @ Start address
-  ldr r1, =CACHEEND    @ End  address
+  ldr r0, =dp0.ram  @ Start address
+  ldr r1, =dp.ram.max    @ End  address
   movs r2, #0          @ This zero is important !s
   movs r3, #0
   movs r4, #0
@@ -106,15 +106,13 @@ NEXT
 
 VARIABLE "argv", ARGV
 
-ramallot UNAME_BUF, 512
-
 COLON "uname", UNAME
-  .word XT_DOLITERAL,RAM_lower_UNAME_BUF
+  .word XT_DOLITERAL,RAM_lower_uname_buf
   .word XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO, XT_ZERO
   .word XT_DOLITERAL, 122
   .word XT_SYSCALL, XT_DROP
   .word XT_EXIT
 
 ENVIRONMENT "hostname", HOSTNAME
-  .word XT_DOLITERAL,RAM_lower_UNAME_BUF+0x41, XT_COUNT0
+  .word XT_DOLITERAL,RAM_lower_uname_buf+0x41, XT_COUNT0
 .word XT_EXIT

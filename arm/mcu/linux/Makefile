@@ -23,11 +23,13 @@ all: build/amforth
 buildinfo: words/build-info.tmpl
 	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
 
-build/%.o: %.asm buildinfo
+build/%.o: %.s buildinfo
 	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../../core -o $@ $<
 
 build/amforth: build/amforth.o
 	$(CROSS)ld -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
+
+include ../../dev/utils.make
 
 clean:
 	rm -f amforth build/* words/build-info.s
@@ -44,7 +46,7 @@ image: build/amforth
 # Apparently cannot run gdb inside the container, because ptrace sys call is not supported in emulation.
 drun: image
 	docker run --interactive --tty --rm \
-		--volume $(shell pwd)/../..:/amforth \
+		--volume $(shell pwd)/../../..:/amforth \
 		amforth:latest
 
 # Run standard tests and output the results, requires WANT_IGNORECASE enabled above
@@ -52,7 +54,7 @@ drun: image
 # Currently segfaults, presumably because variables don't work yet which are central
 # to the implementation of the testing framework (see the tester source)
 test: image
-	docker run --rm --volume $(shell pwd)/../..:/amforth amforth:latest /bin/sh -c \
+	docker run --rm --volume $(shell pwd)/../../..:/amforth amforth:latest /bin/sh -c \
 		'cd amforth/common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
 
 # Starts amforth under QEMU
