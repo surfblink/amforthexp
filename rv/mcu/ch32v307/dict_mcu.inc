@@ -48,3 +48,8 @@
 .endif
 
 .include "words/eeprom.s"
+
+#.include "words/areg.s"
+
+#.include "words/pc.s"
+.include "words/wordswap.s"

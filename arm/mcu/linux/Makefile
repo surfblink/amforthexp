@@ -1,38 +1,24 @@
-# git status may display remote/branch names. That disturbs sed later on
-REVISION := $(shell git status -bs -u no|tr / -)
-ifeq ("$(REVISION)", "")
-    REVISION := $(shell svnversion -n)
+# Override default ARM toolchain for linux target.
+# On MacOS assume homebrew installed toolchain.
+ifeq ($(shell uname -s),Darwin)
+	# On MacOS the tooling doesn't have the -none- bit.
+	CROSS ?= arm-linux-gnueabihf-
+	TC_DIR ?= $(shell brew --prefix arm-linux-gnueabihf-binutils)
+else
+	CROSS ?= arm-none-linux-gnueabihf-
 endif
+
+AMFORTH ?= $(shell git rev-parse --show-toplevel)
+include $(AMFORTH)/arm/dev/Makefile
+MCU_LD ?= linux.ld
 
 # if you want to run standard tests you need WANT_IGNORECASE flag set
 AOPTS=--defsym WANT_IGNORECASE=1
 # if you want debug info add -g
 AOPTS+=-g
 
-CROSS=arm-linux-gnueabihf-
 QEMU=qemu-system-arm
-BOARD=$(shell uname -m)
-ifeq ("$(BOARD)", "armv7l")
-   CROSS=
-   QEMU=
-endif
 LANG=C
-
-all: build/amforth
-
-buildinfo: words/build-info.tmpl
-	cat words/build-info.tmpl | sed "s/%d/ `date`/" | sed "s/%r/${REVISION}/" > words/build-info.s
-
-build/%.o: %.s buildinfo
-	$(CROSS)as $(AOPTS) --warn -al=build/amforth.lst-as -I ../.. -I ../../../core -o $@ $<
-
-build/amforth: build/amforth.o
-	$(CROSS)ld -L ../../../core -T linux.ld -z max-page-size=4096 $< -o $@ 
-
-include ../../dev/utils.make
-
-clean:
-	rm -f amforth build/* words/build-info.s
 
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)

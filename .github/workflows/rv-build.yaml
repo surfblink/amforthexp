@@ -1,0 +1,30 @@
+name: RISC-V Build
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # These should match rv/dev/Makefile
+      TC_VER: 15.2.0-1
+      TC_DIR: ${{ github.workspace }}/toolchain/riscv-none-elf-15.2.0-1
+      CROSS: riscv-none-elf-
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Toolchain Installation
+        id: cache-toolchain
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TC_DIR }}
+          key: ${{ runner.os }}-${{ env.CROSS }}-${{ env.TC_VER }}
+
+      - name: Install ARM GNU Toolchain
+        if: steps.cache-toolchain.outputs.cache-hit != 'true'
+        run: cd rv/dev && make toolchain
+
+      - name: Build CH32
+        run: cd rv/mcu/ch32v307 && make all
+
+      - name: Build HiFive1
+        run: cd rv/mcu/hifive1 && make all
