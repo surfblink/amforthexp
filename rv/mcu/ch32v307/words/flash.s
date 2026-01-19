@@ -286,10 +286,14 @@ QCOMMA_0002: # then
 # THIS IS THE PART TW 
 
 .if WANT_QEM_BUILD
+
     COLON "(h!i)" , INT_STORE
     .word XT_HSTORE
     .word XT_ZERO  # this is here whilst the real INT_STORE leaves n 
-    .word XT_EXIT 
+    .word XT_EXIT
+    
+.include "words/flash.qem"
+
 .else
 
 CODEWORD "(h!i)", INT_STORE # ( -- ) 
@@ -370,8 +374,8 @@ COLON "h!i", HBANGI
     .word XT_STDDOTUNLOCK
 	.word XT_TUCK
     .word XT_INT_STORE
-    .word XT_DOT
-    .word XT_CR 
+#    .word XT_DOT
+#    .word XT_CR 
 	.word XT_DUP
 	.word XT_DOLITERAL
 	.word 0xffe
