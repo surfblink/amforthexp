@@ -17,19 +17,19 @@ This is persistent, executable memory that contains primarily the predefined AmF
 
 ### RAM
 
-This a non-peristent, executable memory used for multiple purposes. It is divided into 2 sections RAMLO and RAMHI.
+This non-peristent, executable memory used for multiple purposes. It is divided into 2 sections AMRAMLO and AMRAMHI.
 
-RAMLO is used to support runtime needs of AmForth, it houses things like the parameter and return stacks, user block, system buffers etc.
+AMRAMLO is used to support runtime needs of AmForth, it houses things like the parameter and return stacks, user block, system buffers etc.
 
-RAMHI is again divided into 2 sections.
+AMRAMHI is again divided into 2 sections.
 
-RAMHI lower part is used for variable values and other mculication uses. The end of the used part of this section is tracked with `vp` pointer.
+AMRAMHI lower part is used for variable values and other application uses. The end of the used part of this section is tracked with `vp` pointer.
 
-RAMHI higher part stores definitions of user defined words. The end of the used part of this section is tracked with `dp.ram` pointer.
+AMRAMHI higher part stores definitions of user defined words. The end of the used part of this section is tracked with `dp.ram` pointer.
 
 ### Data Flash Memory / EEPROM
 
-This is a persistent, non-executable memory. It used to persist AmForth values and other mculication uses. Design yet to be finalized.
+This is persistent, non-executable memory. It used to persist AmForth values and other application uses. Design yet to be finalized.
 
 
 ## Dictionary word layout

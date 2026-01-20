@@ -84,3 +84,19 @@ sec-addr:
 sec-sum:
 	# SECTION SIZE SUMMARY:
 	$(SIZE) build/amforth.elf
+	$(SIZE) build/amforth.elf
+
+## Dump symbols sorted by address, optionally filtered by section (e.g. sec=amramlo)
+symbols:
+	# Value Flags[7] Section Size Symbol
+	# Flags[0]: (l,g,,!) local, global, neither, both.
+	# Flags[1]: (w,) weak or strong symbol.
+	# Flags[2]: (C,) symbol denotes a constructor or an ordinary symbol.
+	# Flags[3]: (W,) symbol is warning or normal symbol.
+	# Flags[4]: (I,) indirect reference to another symbol or normal symbol.
+	# Flags[5]: (d,D,) debugging symbol, dynamic symbol or normal symbol.
+	# Flags[6]: (F,f,O,) symbol is the name of function, file, object or normal symbol.
+	@$(OBJDUMP) --syms build/amforth.elf $(if $(sec), | grep $(sec),) | \
+		grep -E '^[0-9a-f]{8} .*' | \
+		awk '{ printf "0x%s\n",$$0; }' | \
+		sort --key=1 --sort=numeric
