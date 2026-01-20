@@ -20,6 +20,9 @@ AOPTS+=-g
 QEMU=qemu-system-arm
 LANG=C
 
+build/amforth: build/amforth.o
+	$(LD) -L $(AMFORTH)/core -T linux.ld -z max-page-size=4096 $< -o $@ 
+
 # To run amforth in emulated container you can use a container runtime that supports --platform linux/arm/v7
 # For MacOS check out https://orbstack.dev/ (Free for personal use)
 # See Dockerfile for the details of what goes into the container image, tweak to heart's desire.
@@ -41,7 +44,7 @@ drun: image
 # to the implementation of the testing framework (see the tester source)
 test: image
 	docker run --rm --volume $(shell pwd)/../../..:/amforth amforth:latest /bin/sh -c \
-		'cd amforth/common/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
+		'cd amforth/lib/forth2012/tester; cat tester-amforth.frt core.fr | amforth'
 
 # Starts amforth under QEMU
 # WARNING(mk): This seems incomplete and does not work at least on MacOSX;
